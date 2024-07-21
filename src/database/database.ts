@@ -14,7 +14,7 @@ let db: typeof mongoose;
     mongoose.set('strictQuery', true);
     mongoose.connect(MONGODB_URL).then((connection) => {
         db = connection;
-        logger.info('Database connected');
+        logger.info('Database connected !');
     }).catch((error) => {
 
         logger.error('Error connecting to database: ', error);
