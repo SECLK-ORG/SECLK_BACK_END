@@ -1,10 +1,12 @@
-const express=require('express');
+const express = require('express');
+import logger from './utils/logger';
 
-const app =express();
-
-const port=3000;
+const app = express();
 
 
-app.listen(port,()=>{
-    console.log('Server is running on port ${port}');
+
+
+
+app.listen(3000, () => {
+  logger.info('Server is running on port 3000');
 });
