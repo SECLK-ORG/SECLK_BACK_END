@@ -40,10 +40,14 @@ export interface Payment {
 }
 
 export interface User extends Document {
-  username: string;
+  name: string;
   email: string;
+  status:string;
   password: string;
+  contactNumber:string;
+  workLocation?:string;
   role: Roles;
+  startDate:Date;
   position?: string;
   assignedProjects: mongoose.Types.ObjectId[];
   paymentHistory: Payment[];

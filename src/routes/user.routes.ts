@@ -27,15 +27,19 @@ userRouter.get("/", GetUser);
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               name:
  *                 type: string
  *               email:
  *                 type: string
- *               password:
- *                 type: string
  *               role:
  *                 type: string
- *               position:
+ *               contactNumber:
+ *                 type: string 
+ *               workLocation:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *              status:
  *                 type: string
  *     responses:
  *       200:

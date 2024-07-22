@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import Roles from '../../enums/roles';
 import { Payment, User } from '../../models/common';
+import Status from '../../enums/status';
 
 const paymentSchema = new Schema<Payment>({
     projectId: { type: Schema.Types.ObjectId, ref: 'Project' },
@@ -12,11 +13,15 @@ const paymentSchema = new Schema<Payment>({
   });
   
   const userSchema = new Schema<User>({
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    name: { type: String, required: true},
+    email: { type: String, required: true, unique: true ,},
     password: { type: String, required: true },
     role: { type: String, enum: Object.values(Roles), required: true },
+    status:{type:String,enum:Object.values(Status)},
     position: { type: String },
+    contactNumber:{type:String},
+    workLocation:{type:String},
+    startDate:{type:Date,default: Date.now },
     assignedProjects: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
     paymentHistory: [paymentSchema]
   });
