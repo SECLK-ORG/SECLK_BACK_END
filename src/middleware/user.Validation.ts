@@ -1,10 +1,11 @@
 import { check, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
+import Roles from '../enums/roles';
 
 export const addUserValidation = [
   check('name').isString().notEmpty().withMessage('employee name is required'),
   check('email').notEmpty().isEmail().withMessage('Valid email is required'),
-  check('role').notEmpty().isIn(['Admin', 'User']).withMessage('Role must be Admin or User'),
+  check('role').notEmpty().isIn([Roles.ADMIN,Roles.USER]).withMessage('Role must be Admin or User'),
   check('position').optional().isString(),
   (req:Request, res:Response, next:NextFunction) => {
     const errors = validationResult(req);
