@@ -8,5 +8,4 @@ export interface user{
     workLocation:string;
     startDate:string;
     status:string
-
 }

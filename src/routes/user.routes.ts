@@ -6,7 +6,7 @@ const userRouter = Router();
 
 /**
  * @swagger
- * /user/all:
+ * /users/all:
  *   get:
  *     summary: Retrieve a list of users
  *     responses:
@@ -17,7 +17,7 @@ userRouter.get("/all", GetallUser);
 
 /**
  * @swagger
- * /user:
+ * /users:
  *   post:
  *     summary: Add a new user
  *     requestBody:
@@ -91,7 +91,7 @@ userRouter.get("/all", GetallUser);
 userRouter.post("/",addUserValidation,AddUser );
 /**
  * @swagger
- * /user/signIn:
+ * /users/signIn:
  *   post:
  *     summary: Login user
  *     requestBody:

@@ -4,6 +4,7 @@ import { connect } from './database/database';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './utils/swaggerConfig';
 import userRoutes from './routes/user.routes';
+import projectRoutes from './routes/project.routes';
 
 import 'dotenv/config';
 
@@ -28,4 +29,5 @@ app.listen(PORT, () => {
  
 });
 
-app.use('/user', userRoutes);
+app.use('/users', userRoutes);
+app.use('/projects', projectRoutes);
