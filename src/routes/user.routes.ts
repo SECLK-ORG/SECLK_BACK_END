@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AddUser, GetUser } from "../controllers/user.controller";
+import { AddUser, GetUser,loginUser } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
 
 const userRouter = Router();
@@ -89,6 +89,34 @@ userRouter.get("/", GetUser);
  */
 
 userRouter.post("/",addUserValidation,AddUser );
+/**
+ * @swagger
+ * /user/signIn:
+ *   post:
+ *     summary: Login user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "avishkachanaka@gmail.com"
+ *               password:
+ *                 type: string
+ *                 example: "hyteva3d"
+ *     responses:
+ *       200:
+ *         description: User login successful
+ *       401:
+ *         description: Unauthorized, invalid credentials
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.post("/signIn", loginUser);
+
 
 
     
