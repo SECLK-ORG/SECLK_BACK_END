@@ -9,6 +9,7 @@ export const AddUser = async (req:Request, res:Response) => {
         userData.email=userData.email.toLowerCase()
         const tempPassword= await createTempPassword();
         const hashedPassword= await bcrypt.hash(tempPassword,10);
+        userData.password=hashedPassword
         logger.info(`Received user data: ${JSON.stringify(userData)}`);
         const response= await addUserService(userData)
       
