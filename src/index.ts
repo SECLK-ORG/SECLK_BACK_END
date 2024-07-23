@@ -12,6 +12,8 @@ import 'dotenv/config';
 const app = express();
 // Middleware to parse JSON
 app.use(express.json());
+
+
 const PORT = process.env.PORT || "3000";
 // Serve Swagger docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
