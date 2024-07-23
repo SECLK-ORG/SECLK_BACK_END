@@ -39,7 +39,7 @@ userRouter.get("/", GetUser);
  *                 type: string
  *               startDate:
  *                 type: string
- *              status:
+ *               status:
  *                 type: string
  *     responses:
  *       200:
