@@ -1,19 +1,19 @@
 import { Router } from "express";
-import { AddUser, GetUser,loginUser } from "../controllers/user.controller";
+import { AddUser, GetallUser,loginUser } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
 
 const userRouter = Router();
 
 /**
  * @swagger
- * /user:
+ * /user/all:
  *   get:
  *     summary: Retrieve a list of users
  *     responses:
  *       200:
  *         description: A list of users
  */
-userRouter.get("/", GetUser);
+userRouter.get("/all", GetallUser);
 
 /**
  * @swagger

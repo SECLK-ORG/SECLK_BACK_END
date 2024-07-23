@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { user } from '../models/user.model';
 import logger from '../utils/logger';
-import { addUserService, loginUserService } from '../services/user.services';
+import { addUserService, getAllUsersService, loginUserService } from '../services/user.services';
 import { AppError, BadRequestError } from '../models/errors';
 export const AddUser = async (req:Request, res:Response) => {
     try {
@@ -22,9 +22,10 @@ export const AddUser = async (req:Request, res:Response) => {
     }
 }
 
-export const GetUser = async (req:Request, res:Response) => {
+export const GetallUser = async (req:Request, res:Response) => {
     try {
-        res.send("User Fetched");
+        const response= await getAllUsersService();
+        res.status(response.code).send(response);
     } catch (error:any) {
         if (error instanceof AppError) {
             res.status(error.statusCode).send({ message: error.message });
@@ -51,6 +52,3 @@ export const loginUser=async(req:Request,res:Response)=>{
         }
     }
 }
-
-
-

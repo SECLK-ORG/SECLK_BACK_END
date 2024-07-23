@@ -23,3 +23,12 @@ export const findUserByEmail = async (email: string) => {
         throw new Error(error.message);
     }
 }
+export const getAllUsers = async () => {
+    try {
+        const users = await userSchema.find();
+        return users;
+    } catch (error: any) {
+        logger.error(`Error in getAllUsers: ${error.message}`);
+        throw new Error(error.message);
+    }
+}

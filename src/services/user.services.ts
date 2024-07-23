@@ -1,5 +1,5 @@
 import { user } from "../models/user.model";
-import { findUserByEmail, createUser } from "../repository/user.repository";
+import { findUserByEmail, createUser, getAllUsers } from "../repository/user.repository";
 import logger from "../utils/logger";
 import { responseFormate } from "../models/response";
 import bcrypt from 'bcrypt';
@@ -44,6 +44,24 @@ export const loginUserService = async (email: string, password: string) => {
         message: "Login Success"
     };
     return response;
+}
+
+
+export const getAllUsersService=async()=>{
+    try {
+        const users = await getAllUsers();
+        const response: responseFormate = {
+            code: 200,
+            data: users,
+            message: "Users Fetched"
+        };
+        return response;
+    } catch (error: any) {
+        logger.error(`Error in getAllUsersService: ${error.message}`);
+        throw new Error(error.message);
+    
+    }
+
 }
 
 
