@@ -11,21 +11,16 @@ export const addUserService = async (userData: user) => {
     const hashedPassword= await bcrypt.hash(tempPassword,10);
     userData.password=hashedPassword;
 
-    // const existingUser = await findUserByEmail(userData.email);
-    // if (existingUser) {
-    //     throw new Error("user Already Eexist")
-    // }
-    // const data = await createUser(userData);
-    // / Send welcome email
-
-    const emailContent = `Your temporary password is ${tempPassword}. Please login and change your password.
-    use this link to login http://localhost:3000/login
-    `;
+    const existingUser = await findUserByEmail(userData.email);
+    if (existingUser) {
+        throw new Error("user Already Eexist")
+    }
+    const data = await createUser(userData);
     await sendEmail(userData.email, 'Welcome to SE Consultant', tempPassword,userData.name);
 
     const response: responseFormate = {
         code: 201,
-        data: "data",
+        data: data,
         message: "User Created"
     };
     return response;
