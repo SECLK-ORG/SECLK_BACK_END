@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AddUser, GetallUser,loginUser } from "../controllers/user.controller";
+import { AddUser, GetallUser,loginUser, resetPassWord } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
 
 const userRouter = Router();
@@ -116,6 +116,40 @@ userRouter.post("/",addUserValidation,AddUser );
  *         description: Internal server error
  */
 userRouter.post("/signIn", loginUser);
+
+
+/**
+ * @swagger
+ * /users/resetPassword:
+ *   put:
+ *     summary: Reset user password
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "avishkachanaka@gmail.com"
+ *               password:
+ *                 type: string
+ *                 example: "newpassword123"
+ *               token:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF2aXNoa2FjaGFuYWthQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoieXg3Ymtkd3ciLCJpYXQiOjE3MjIzNDM2NTR9.gqfptq83XvSPxMvlL43T8Q7hIjpeB4EwmUUVhMgDu40"
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Bad Request, missing email or password
+ *       401:
+ *         description: Unauthorized, invalid token
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.put("/resetPassword", resetPassWord);
 
 
 

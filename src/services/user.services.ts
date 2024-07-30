@@ -5,7 +5,7 @@ import { responseFormate } from "../models/response";
 import bcrypt from 'bcrypt';
 import { sendEmail } from "./email.services";
 import { BadRequestError, NotFoundError, UnauthorizedError } from "../models/errors";
-import { generateToken } from "../jwt/jwt";
+import { generateToken, validateToken } from "../jwt/jwt";
 
 export const addUserService = async (userData: user) => {
     logger.info(`addUserServiceRequest userData = ${JSON.stringify(userData)}`);
@@ -19,9 +19,6 @@ export const addUserService = async (userData: user) => {
         throw new BadRequestError("user Already Eexist")
     }
     const data:any = await createUser(userData);
-
- 
-    // await updateUserId(data._id,{pwResetToken:resetToken});
     await sendEmail(userData.email, 'Welcome to SE Consultant', resetToken,userData.name);
 
     const response: responseFormate = {
@@ -69,7 +66,24 @@ export const getAllUsersService=async()=>{
 
 }
 
+export const  ResetPasswordService=async(email:string,password:string,token:string)=>{
+    const user:any = await findUserByEmail(email);
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
 
+    await validateToken(token)
+    const hashedPassword= await bcrypt.hash(password,10);
+
+    const updatedUser = await updateUserId(user._id, { password: hashedPassword ,pwResetToken:null });
+    const response: responseFormate = {
+        code: 200,
+        data: updatedUser,
+        message: "Password Reset Success"
+    };
+    return response;
+}
 const createTempPassword= async()=>{
     return Math.random().toString(36).slice(-8);
 }
+
