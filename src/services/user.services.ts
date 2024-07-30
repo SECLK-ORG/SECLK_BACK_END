@@ -1,23 +1,28 @@
 import { user } from "../models/user.model";
-import { findUserByEmail, createUser, getAllUsers } from "../repository/user.repository";
+import { findUserByEmail, createUser, getAllUsers, updateUserId } from "../repository/user.repository";
 import logger from "../utils/logger";
 import { responseFormate } from "../models/response";
 import bcrypt from 'bcrypt';
 import { sendEmail } from "./email.services";
 import { BadRequestError, NotFoundError, UnauthorizedError } from "../models/errors";
+import { generateToken } from "../jwt/jwt";
 
 export const addUserService = async (userData: user) => {
     logger.info(`addUserServiceRequest userData = ${JSON.stringify(userData)}`);
     const tempPassword= await createTempPassword();
     const hashedPassword= await bcrypt.hash(tempPassword,10);
     userData.password=hashedPassword;
-
     const existingUser = await findUserByEmail(userData.email);
+    const  resetToken=await generateToken({email:userData.email,password:tempPassword});
+    userData.pwResetToken=resetToken;
     if (existingUser) {
         throw new BadRequestError("user Already Eexist")
     }
-    const data = await createUser(userData);
-    await sendEmail(userData.email, 'Welcome to SE Consultant', tempPassword,userData.name);
+    const data:any = await createUser(userData);
+
+ 
+    // await updateUserId(data._id,{pwResetToken:resetToken});
+    await sendEmail(userData.email, 'Welcome to SE Consultant', resetToken,userData.name);
 
     const response: responseFormate = {
         code: 201,

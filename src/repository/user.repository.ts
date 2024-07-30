@@ -32,3 +32,13 @@ export const getAllUsers = async () => {
         throw new Error(error.message);
     }
 }
+export const updateUserId = async (id: string, userData: any) => {
+    try {
+        const updatedUser = await userSchema.findOneAndUpdate({ _id: id }, userData, { new: true });
+        return updatedUser;
+    } catch (error: any) {
+        logger.error(`Error in updateUser: ${error.message}`);
+        throw new Error(error.message);
+    }
+
+}

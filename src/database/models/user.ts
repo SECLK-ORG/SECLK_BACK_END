@@ -20,6 +20,7 @@ const paymentSchema = new Schema<Payment>({
     status:{type:String,enum:Object.values(Status)},
     position: { type: String },
     contactNumber:{type:String},
+    pwResetToken: { type: String},
     workLocation:{type:String},
     startDate:{type:Date,default: Date.now },
     assignedProjects: [{ type: Schema.Types.ObjectId, ref: 'Project' }],

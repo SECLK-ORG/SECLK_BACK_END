@@ -49,6 +49,7 @@ export interface User extends Document {
   role: Roles;
   startDate:Date;
   position?: string;
+  pwResetToken?: string;
   assignedProjects: mongoose.Types.ObjectId[];
   paymentHistory: Payment[];
 }

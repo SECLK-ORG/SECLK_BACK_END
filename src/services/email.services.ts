@@ -13,10 +13,10 @@ const mailConfig = {
 
 const transporter = nodemailer.createTransport(mailConfig);
 
-export const sendEmail = async (receiver: string, subject: string, password: string,name:string) => {
+export const sendEmail = async (receiver: string, subject: string, resetToken: string,name:string) => {
     try {
         const templatePath = path.resolve(__dirname, '..', 'templates', 'welcome.ejs');
-        const data = await ejs.renderFile(templatePath, { name, password,url:"http://localhost:3000/login" });
+        const data = await ejs.renderFile(templatePath, { name,url:`http://localhost:3000/login/${resetToken}` });
 
         const mailOptions = {
             from: 'avishkachanaka@gmail.com',
@@ -35,6 +35,7 @@ export const sendEmail = async (receiver: string, subject: string, password: str
         const info = await transporter.sendMail(mailOptions);
         logger.info('Message sent: %s', info.messageId);
     } catch (error) {
+        console.log("first error",error)
         logger.error('Error sending email:', error);
     }
 };
