@@ -5,7 +5,7 @@ import { responseFormate } from "../models/response";
 import bcrypt from 'bcrypt';
 import { sendEmail } from "./email.services";
 import { BadRequestError, NotFoundError, UnauthorizedError } from "../models/errors";
-import { generateToken, validateToken } from "../jwt/jwt";
+import { generateAccessToken, generateToken, validateToken } from "../jwt/jwt";
 
 export const addUserService = async (userData: user) => {
     logger.info(`addUserServiceRequest userData = ${JSON.stringify(userData)}`);
@@ -32,7 +32,7 @@ export const addUserService = async (userData: user) => {
 
 export const loginUserService = async (email: string, password: string) => {
     logger.info(`loginUserServiceRequest email = ${email}`);
-    const user = await findUserByEmail(email);
+    const user:any = await findUserByEmail(email);
     if (!user) {
         throw new NotFoundError("User not found");
     }
@@ -40,9 +40,13 @@ export const loginUserService = async (email: string, password: string) => {
     if (!isPasswordMatch) {
         throw new UnauthorizedError("Invalid Password");
     }
+   const accessToken= await generateAccessToken(user);
+  if(accessToken === undefined || accessToken === null){
+        throw new BadRequestError("Token Generation Failed")
+     }
     const response: responseFormate = {
         code: 200,
-        data: user,
+        data: accessToken,
         message: "Login Success"
     };
     return response;

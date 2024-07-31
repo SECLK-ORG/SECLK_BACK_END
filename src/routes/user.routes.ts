@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AddUser, GetallUser,loginUser, resetPassWord } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
+import {isAuth} from "../middleware/isAuth";
 
 const userRouter = Router();
 
@@ -13,7 +14,7 @@ const userRouter = Router();
  *       200:
  *         description: A list of users
  */
-userRouter.get("/all", GetallUser);
+userRouter.get("/all",isAuth, GetallUser);
 
 /**
  * @swagger
@@ -88,7 +89,7 @@ userRouter.get("/all", GetallUser);
  *                   example: "User Created"
  */
 
-userRouter.post("/",addUserValidation,AddUser );
+userRouter.post("/",isAuth,addUserValidation,AddUser );
 /**
  * @swagger
  * /users/signIn:
@@ -149,7 +150,7 @@ userRouter.post("/signIn", loginUser);
  *       500:
  *         description: Internal server error
  */
-userRouter.put("/resetPassword", resetPassWord);
+userRouter.put("/resetPassword",resetPassWord);
 
 
 

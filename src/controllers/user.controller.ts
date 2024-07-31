@@ -3,6 +3,7 @@ import { user } from '../models/user.model';
 import logger from '../utils/logger';
 import { addUserService, getAllUsersService, loginUserService, ResetPasswordService } from '../services/user.services';
 import { AppError, BadRequestError } from '../models/errors';
+import { generateAccessToken } from '../jwt/jwt';
 export const AddUser = async (req:Request, res:Response) => {
     try {
         const userData:user=req.body;
@@ -42,7 +43,8 @@ export const loginUser=async(req:Request,res:Response)=>{
         if(!email || !password){
             throw new BadRequestError('Email and Password are required')
         }
-        const response= await loginUserService(email,password)
+        const response:any= await loginUserService(email,password)
+        
         res.status(response.code).send(response);
     } catch (error:any) {
         if (error instanceof AppError) {

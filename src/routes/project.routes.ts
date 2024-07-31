@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getAllProjects, createProject } from '../controllers/project.controller';
+import { isAuth } from "../middleware/isAuth";
 
 const projectRouter = Router();
 
@@ -33,7 +34,7 @@ const projectRouter = Router();
  *                     format: date-time
  *                     example: "2021-06-13T18:25:43.511Z"
  */
-projectRouter.get('/all', getAllProjects);
+projectRouter.get('/all',isAuth, getAllProjects);
 
 /**
  * @swagger
@@ -80,6 +81,6 @@ projectRouter.get('/all', getAllProjects);
  *       500:
  *         description: Internal server error
  */
-projectRouter.post('/create', createProject);
+projectRouter.post('/create',isAuth, createProject);
 
 export default projectRouter;

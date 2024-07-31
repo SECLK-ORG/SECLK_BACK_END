@@ -16,7 +16,6 @@ export const findUserByEmail = async (email: string) => {
     try {
         logger.info(`findUserByEmail - ${email.toLowerCase()}`);
         const user = await userSchema.findOne({ email: email.toLowerCase() });
-        logger.info(`findUserByEmail user - ${user}`);
         return user;
     } catch (error: any) {
         logger.error(`Error in findUserByEmail: ${error.message}`);

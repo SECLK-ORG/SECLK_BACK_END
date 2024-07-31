@@ -19,6 +19,7 @@ app.use(cors());
 
 const PORT = process.env.PORT || "9090";
 // Serve Swagger docs
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 

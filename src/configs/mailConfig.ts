@@ -7,6 +7,6 @@ export const mailConfig = {
       pass: "Avishka.1999",
     },
     to: "avishkachanaka@gmail.com",
-    // dearName: "Admin",
+
   };
   
