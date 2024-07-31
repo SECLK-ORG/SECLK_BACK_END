@@ -5,7 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './utils/swaggerConfig';
 import userRoutes from './routes/user.routes';
 import projectRoutes from './routes/project.routes';
-
+import cors from 'cors';
 import 'dotenv/config';
 
 
@@ -13,9 +13,11 @@ import 'dotenv/config';
 const app = express();
 // Middleware to parse JSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 
-const PORT = process.env.PORT || "3000";
+const PORT = process.env.PORT || "9090";
 // Serve Swagger docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -29,5 +31,6 @@ app.listen(PORT, () => {
  
 });
 
-app.use('/users', userRoutes);
-app.use('/projects', projectRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/projects', projectRoutes);
+

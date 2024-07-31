@@ -71,7 +71,9 @@ export const  ResetPasswordService=async(email:string,password:string,token:stri
     if (!user) {
         throw new NotFoundError("User not found");
     }
-
+    if(user.pwResetToken!==token){
+        throw new UnauthorizedError("Token is invalid please try again");
+    }
     await validateToken(token)
     const hashedPassword= await bcrypt.hash(password,10);
 
