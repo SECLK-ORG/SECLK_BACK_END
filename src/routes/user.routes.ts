@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AddUser, GetallUser,loginUser, resetPassWord } from "../controllers/user.controller";
+import { AddUser, forgotPassword, GetallUser,loginUser, resetPassWord } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
 import {isAuth} from "../middleware/isAuth";
 
@@ -152,6 +152,33 @@ userRouter.post("/signIn", loginUser);
  */
 userRouter.put("/resetPassword",resetPassWord);
 
+
+/**
+ * @swagger
+ * /users/forgotPassword:
+ *   post:
+ *     summary: forgot Password user 
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "avishkachanaka@gmail.com"
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Bad Request, missing email or password
+ *       401:
+ *         description: Unauthorized, invalid token
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.post("/forgotPassword",forgotPassword)
 
 
     

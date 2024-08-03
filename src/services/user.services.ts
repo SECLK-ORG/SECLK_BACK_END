@@ -5,7 +5,7 @@ import { responseFormate } from "../models/response";
 import bcrypt from 'bcrypt';
 import { sendEmail } from "./email.services";
 import { BadRequestError, NotFoundError, UnauthorizedError } from "../models/errors";
-import { generateAccessToken, generateToken, validateToken } from "../jwt/jwt";
+import { generateAccessToken, generateForgotPasswordToken, generateToken, validateToken } from "../jwt/jwt";
 
 export const addUserService = async (userData: user) => {
     logger.info(`addUserServiceRequest userData = ${JSON.stringify(userData)}`);
@@ -91,5 +91,28 @@ export const  ResetPasswordService=async(email:string,password:string,token:stri
 }
 const createTempPassword= async()=>{
     return Math.random().toString(36).slice(-8);
+}
+
+export const forgotPasswordService=async(email:string)=>{
+    const user:any = await findUserByEmail(email);
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
+    try {
+        const resetToken=await generateForgotPasswordToken({email:email});
+        logger.info(`resetToken = ${resetToken}`);
+        const updatedUser = await updateUserId(user._id, { pwResetToken:resetToken });
+        await sendEmail(email, 'Password Reset', resetToken,user.name);
+        const response: responseFormate = {
+            code: 200,
+            data: updatedUser,
+            message: "Password Reset Success"
+        };
+        return response;
+        
+    } catch (error:any) {
+        throw new Error(error.message);
+    }
+   
 }
 

@@ -9,6 +9,10 @@ export const generateToken = async(payload: any) => {
 
 }
 
+export const  generateForgotPasswordToken = async(payload: any) => {
+    return jwt.sign(payload,JWT_SECRET,{expiresIn:'300'});
+}
+
 export const generateAccessToken = async(payload: any) => {
     return jwt.sign({
         email: payload.email,
