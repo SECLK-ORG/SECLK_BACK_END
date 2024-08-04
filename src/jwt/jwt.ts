@@ -1,28 +1,28 @@
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../configs/config';
 import { BadRequestError, UnauthorizedError } from '../models/errors';
-import { model } from 'mongoose';
 
-export const generateToken = async(payload: any) => {
-    // return jwt.sign(payload,JWT_SECRET,{expiresIn:'1s'});
-    return jwt.sign(payload,JWT_SECRET);
-
+// Generate a generic token
+export const generateToken = async (payload: any) => {
+    return jwt.sign(payload, JWT_SECRET);
 }
 
-export const  generateForgotPasswordToken = async(payload: any) => {
-    return jwt.sign(payload,JWT_SECRET,{expiresIn:'300'});
+// Generate a forgot password token
+export const generateForgotPasswordToken = async (payload: any) => {
+    return jwt.sign({ email: payload.email }, JWT_SECRET, { expiresIn: '300s' });
 }
 
-export const generateAccessToken = async(payload: any) => {
+// Generate an access token
+export const generateAccessToken = async (payload: any) => {
     return jwt.sign({
         email: payload.email,
         userId: payload._id.toString(),
         role: payload.role,
         name: payload.name,
     }, JWT_SECRET, { expiresIn: '24h' });
-   
 }
 
+// Validate a token
 export const validateToken = async (token: string): Promise<void> => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
@@ -39,11 +39,4 @@ export const validateToken = async (token: string): Promise<void> => {
             }
         });
     });
-};
-
-
-module.exports = {
-    generateToken,
-    generateAccessToken,
-    validateToken
 }
