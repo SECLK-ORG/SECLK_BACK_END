@@ -31,5 +31,18 @@ const incomeSchema = new Schema<Income>({
     incomeDetails: [incomeSchema],
     expenseDetails: [expenseSchema]
   });
-  
+  // Middleware to calculate totalIncome and totalExpenses before saving
+projectSchema.pre('save', function (next) {
+  const project = this;
+
+  // Calculate totalIncome
+  project.totalIncome = project.incomeDetails.reduce((sum, income) => sum + income.amount, 0);
+
+  // Calculate totalExpenses
+  project.totalExpenses = project.expenseDetails.reduce((sum, expense) => sum + expense.amount, 0);
+
+  next();
+});
+
+
   export default mongoose.model<Project>('Project', projectSchema);
