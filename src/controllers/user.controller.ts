@@ -39,7 +39,6 @@ export const GetallUser = async (req:Request, res:Response) => {
 export const loginUser=async(req:Request,res:Response)=>{
     try {
         const {email,password}=req.body;
-        console.log("first",email,password)
     
         if(!email || !password){
             throw new BadRequestError('Email and Password are required')

@@ -1,5 +1,5 @@
 import  Jwt  from "jsonwebtoken";
-import { BadRequestError, UnauthorizedError } from '../models/errors';
+import {  UnauthorizedError } from '../models/errors';
 import { Request,Response ,NextFunction} from "express";
 import { JWT_SECRET } from "../configs/config";
 

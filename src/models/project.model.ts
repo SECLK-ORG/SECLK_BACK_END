@@ -1,4 +1,4 @@
-export interface project{
+export interface createProjectDto{
     projectName:string;
     startDate:string;
     endDate:string;
@@ -6,4 +6,6 @@ export interface project{
     clientContactNumber:string;
     clientEmail:string;
     paymentType:string;
+    createdBy:string;
 }
+

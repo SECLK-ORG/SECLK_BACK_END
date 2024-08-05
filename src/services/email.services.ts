@@ -36,7 +36,6 @@ export const sendEmail = async (receiver: string, subject: string, resetToken: s
         const info = await transporter.sendMail(mailOptions);
         logger.info('Message sent: %s', info.messageId);
     } catch (error) {
-        console.log("first error",error)
         logger.error('Error sending email:', error);
     }
 };

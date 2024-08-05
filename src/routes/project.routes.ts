@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllProjects, createProject } from '../controllers/project.controller';
+import { getAllProjects, createProject, getProjectStatusCount } from '../controllers/project.controller';
 import { isAuth } from "../middleware/isAuth";
 
 const projectRouter = Router();
@@ -49,12 +49,36 @@ projectRouter.get('/all',isAuth, getAllProjects);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               projectName:
  *                 type: string
  *                 example: "New Project"
- *               description:
+ *               startDate:
  *                 type: string
- *                 example: "Project Description"
+ *                 format: date
+ *                 example: "2024-08-01"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-12-31"
+ *               category:
+ *                   type: string
+ *                   example: "UK"
+ *               status:
+ *                   type: string
+ *                   example: "Completed"
+ *               clientContactNumber:
+ *                 type: string
+ *                 example: "+1234567890"
+ *               clientEmail:
+ *                 type: string
+ *                 format: email
+ *                 example: "client@example.com"
+ *               paymentType:
+ *                 type: string
+ *                 example: "Credit Card"
+ *               createdBy:
+ *                 type: string
+ *                 example: "60c72b2f4f1a2c001c8e4f34"
  *     responses:
  *       201:
  *         description: Project created successfully
@@ -66,21 +90,77 @@ projectRouter.get('/all',isAuth, getAllProjects);
  *                 id:
  *                   type: string
  *                   example: "60c72b2f4f1a2c001c8e4f34"
- *                 name:
+ *                 projectName:
  *                   type: string
  *                   example: "New Project"
- *                 description:
+ *                 startDate:
  *                   type: string
- *                   example: "Project Description"
+ *                   format: date
+ *                   example: "2024-08-01"
+ *                 endDate:
+ *                   type: string
+ *                   format: date
+ *                   example: "2024-12-31"
+ *                 category:
+ *                   type: string
+ *                   example: "UK"
+ *                 status:
+ *                   type: string
+ *                   example: "Completed"
+ *                 clientContactNumber:
+ *                   type: string
+ *                   example: "+1234567890"
+ *                 clientEmail:
+ *                   type: string
+ *                   format: email
+ *                   example: "client@example.com"
+ *                 paymentType:
+ *                   type: string
+ *                   example: "Credit Card"
+ *                 createdBy:
+ *                   type: string
+ *                   example: "66aa422f704f28d4993c7d41"
  *                 createdAt:
  *                   type: string
  *                   format: date-time
- *                   example: "2021-06-13T18:25:43.511Z"
+ *                   example: "2024-08-01T18:25:43.511Z"
  *       400:
  *         description: Invalid input
  *       500:
  *         description: Internal server error
  */
+
 projectRouter.post('/create',isAuth, createProject);
+
+/**
+ * @swagger
+ * /projects/getProjectStatusCount:
+ *   get:
+ *     summary: Get project counts by status
+ *     description: Retrieve the count of projects based on their status.
+ *     responses:
+ *       200:
+ *         description: Projects fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: integer
+ *                   example: 100
+ *                 Completed:
+ *                   type: integer
+ *                   example: 40
+ *                 InProgress:
+ *                   type: integer
+ *                   example: 50
+ *                 OnHold:
+ *                   type: integer
+ *                   example: 10
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.get("/getProjectStatusCount",isAuth, getProjectStatusCount);
 
 export default projectRouter;

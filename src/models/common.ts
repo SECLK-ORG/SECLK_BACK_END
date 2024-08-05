@@ -22,6 +22,8 @@ export interface Project extends Document {
   endDate?: Date;
   category: string;
   status: Status;
+  clientContactNumber?: string;
+  clientEmail?: string;
   totalIncome: number;
   totalExpenses: number;
   employees: mongoose.Types.ObjectId[];

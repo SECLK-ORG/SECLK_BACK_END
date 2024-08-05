@@ -25,6 +25,8 @@ const incomeSchema = new Schema<Income>({
     category: { type: String, required: true },
     status: { type: String, enum: Object.values(Status), required: true },
     totalIncome: { type: Number, default: 0 },
+    clientContactNumber:{ type: String, required: false },
+    clientEmail:{ type: String, required: false },
     totalExpenses: { type: Number, default: 0 },
     employees: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },

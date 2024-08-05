@@ -107,7 +107,7 @@ userRouter.post("/",isAuth,addUserValidation,AddUser );
  *                 example: "avishkachanaka@gmail.com"
  *               password:
  *                 type: string
- *                 example: "hyteva3d"
+ *                 example: "123"
  *     responses:
  *       200:
  *         description: User login successful
@@ -179,6 +179,8 @@ userRouter.put("/resetPassword",resetPassWord);
  *         description: Internal server error
  */
 userRouter.post("/forgotPassword",forgotPassword)
+
+
 
 
     
