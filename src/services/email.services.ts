@@ -13,9 +13,10 @@ const mailConfig = {
 
 const transporter = nodemailer.createTransport(mailConfig);
 
-export const sendEmail = async (receiver: string, subject: string, resetToken: string,name:string) => {
+export const sendEmail = async (receiver: string, subject: string, resetToken: string,name:string,template:string) => {
     try {
-        const templatePath = path.resolve(__dirname, '..', 'templates', 'welcome.ejs');
+        //welcome.ejs
+        const templatePath = path.resolve(__dirname, '..', 'templates', template);
         const data = await ejs.renderFile(templatePath, { name,url:`http://localhost:3000/login/${resetToken}` });
 
         const mailOptions = {

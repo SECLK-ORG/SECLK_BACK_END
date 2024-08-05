@@ -19,7 +19,7 @@ export const addUserService = async (userData: user) => {
         throw new BadRequestError("user Already Eexist")
     }
     const data:any = await createUser(userData);
-    await sendEmail(userData.email, 'Welcome to SE Consultant', resetToken,userData.name);
+    await sendEmail(userData.email, 'Welcome to SE Consultant', resetToken,userData.name,'welcome.ejs');
 
     const response: responseFormate = {
         code: 201,
@@ -102,7 +102,7 @@ export const forgotPasswordService=async(email:string)=>{
         const resetToken=await generateForgotPasswordToken({email:email});
         logger.info(`resetToken = ${resetToken}`);
         const updatedUser = await updateUserId(user._id, { pwResetToken:resetToken });
-        await sendEmail(email, 'Password Reset', resetToken,user.name);
+        await sendEmail(email, 'Password Reset', resetToken,user.name,'reset.ejs');
         const response: responseFormate = {
             code: 200,
             data: updatedUser,
