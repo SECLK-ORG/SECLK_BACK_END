@@ -7,6 +7,8 @@ import userRoutes from './routes/user.routes';
 import projectRoutes from './routes/project.routes';
 import cors from 'cors';
 import 'dotenv/config';
+import categoryRouter from './routes/category.routes';
+import positionRouter from './routes/position.routes';
 
 
 
@@ -34,4 +36,6 @@ app.listen(PORT, () => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/categories', categoryRouter);
+app.use('/api/positions', positionRouter);
 

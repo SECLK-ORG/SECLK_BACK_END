@@ -55,3 +55,11 @@ export interface User extends Document {
   assignedProjects: mongoose.Types.ObjectId[];
   paymentHistory: Payment[];
 }
+
+export interface Category extends Document {
+  category: string;
+}
+export interface Positions extends Document {
+
+positions: string;
+}
