@@ -1,5 +1,5 @@
-import  Jwt  from "jsonwebtoken";
-import {  UnauthorizedError } from '../models/errors';
+import  Jwt from "jsonwebtoken";
+import {  UnauthorizedError,TokenExpiredError } from '../models/errors';
 import { Request,Response ,NextFunction} from "express";
 import { JWT_SECRET } from "../configs/config";
 
@@ -13,10 +13,14 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
     try {
         decodedToken = Jwt.verify(token, JWT_SECRET);
 
-    } catch (error:any) {
-        error.statusCode = 500;
-        throw new UnauthorizedError('Not Authenticated');
+    } catch (error: any) {
+        if (error.name === 'TokenExpiredError') {
+            throw new TokenExpiredError('Token has expired');
+        } else {
+            throw new UnauthorizedError('Not Authenticated');
+        }
     }
+
     if (!decodedToken) {
         throw new UnauthorizedError('Not Authenticated');
     }
