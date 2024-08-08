@@ -14,7 +14,12 @@ export interface Expense {
     description?: string;
     source?: string;
   }
-
+export interface Employee {
+  employeeID: mongoose.Types.ObjectId;
+  employeeName: string;
+  email: string;
+  projectStartDate: Date;
+}
 
 export interface Project extends Document {
   projectName: string;
@@ -26,7 +31,7 @@ export interface Project extends Document {
   clientEmail?: string;
   totalIncome: number;
   totalExpenses: number;
-  employees: mongoose.Types.ObjectId[];
+  employees: Employee[];
   createdBy: mongoose.Types.ObjectId;
   incomeDetails: Income[];
   expenseDetails: Expense[];

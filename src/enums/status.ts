@@ -1,7 +1,7 @@
 enum Status {
-    COMPLETED = 'Completed',
-    INPROGRESS = 'In Progress',
-    HOLD= 'On Hold',
+  COMPLETED = 'Completed',
+  IN_PROGRESS = 'In-Progress',
+  ON_HOLD = 'On-Hold'
   }
   
   export default Status;
