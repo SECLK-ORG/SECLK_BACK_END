@@ -8,6 +8,13 @@ export interface Expense {
     description?: string;
     vendor?: string;
     invoiceNumber?: string;
+    employeeID?: UserData;
+  }
+
+  export interface UserData{
+    _id: string;
+    name: string;
+    email: string;
   }
   export interface Income {
     receivedBy: string;

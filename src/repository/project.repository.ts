@@ -3,6 +3,7 @@ import projectSchema from '../database/models/project';
 import Status from '../enums/status';
 import { createProjectDto, updateProjectDto } from '../models/project.model';
 import logger from '../utils/logger';
+import { Income, Expense } from '../models/common';
 
 export const getAllProjectsRepo = async () => {
     try {
@@ -11,7 +12,7 @@ export const getAllProjectsRepo = async () => {
     } catch (error: any) {
         throw new Error(error.message);
     }
-}
+};
 
 export const createProjectRepo = async (projectData: createProjectDto) => {
     try {
@@ -21,7 +22,7 @@ export const createProjectRepo = async (projectData: createProjectDto) => {
         logger.error(`Error in createUser: ${error.message}`);
         throw new Error(error.message);
     }
-}
+};
 
 export const getProjectStatusCountRepo = async () => {
     try {
@@ -51,7 +52,7 @@ export const getProjectStatusCountRepo = async () => {
     } catch (error: any) {
         throw new Error(error.message);
     }
-}
+};
 
 export const getAllocatedProjectsByUserIdServiceRepo = async (userId: string) => {
     try {
@@ -65,7 +66,7 @@ export const getAllocatedProjectsByUserIdServiceRepo = async (userId: string) =>
         logger.error(`Error fetching projects: ${error.message}`);
         throw new Error(error.message);
     }
-}
+};
 
 export const updateProjectRepo = async (projectId: string, projectData: updateProjectDto) => {
     try {
@@ -75,7 +76,7 @@ export const updateProjectRepo = async (projectId: string, projectData: updatePr
         logger.error(`Error updating project: ${error.message}`);
         throw new Error(error.message);
     }
-}
+};
 
 export const deleteProjectRepo = async (projectId: string) => {
     try {
@@ -86,7 +87,7 @@ export const deleteProjectRepo = async (projectId: string) => {
         logger.error(`Error deleting project: ${error.message}`);
         throw new Error(error.message);
     }
-}
+};
 
 export const getProjectByIdRepo = async (projectId: string) => {
     try {
@@ -99,7 +100,7 @@ export const getProjectByIdRepo = async (projectId: string) => {
         logger.error(`Error fetching project: ${error.message}`);
         throw new Error(error.message);
     }
-}
+};
 
 export const getIncomeDetailsBYProjectIdRepo = async (projectId: string) => {
     try {
@@ -112,8 +113,8 @@ export const getIncomeDetailsBYProjectIdRepo = async (projectId: string) => {
         logger.error(`Error fetching income details: ${error.message}`);
         throw new Error(error.message);
     }
+};
 
-}
 export const getExpenseDetailsBYProjectIdRepo = async (projectId: string) => {
     try {
         logger.info(`Fetching expense details for project with id: ${projectId}`);
@@ -125,7 +126,7 @@ export const getExpenseDetailsBYProjectIdRepo = async (projectId: string) => {
         logger.error(`Error fetching expense details: ${error.message}`);
         throw new Error(error.message);
     }
-}
+};
 
 export const getEmployeeDetailsBYProjectIdRepo = async (projectId: string) => {
     try {
@@ -138,8 +139,7 @@ export const getEmployeeDetailsBYProjectIdRepo = async (projectId: string) => {
         logger.error(`Error fetching employee details: ${error.message}`);
         throw new Error(error.message);
     }
-}
-
+};
 
 export const addIncomeDetailToProjectRepo = async (projectId: string, incomeDetail: any) => {
     try {
@@ -149,12 +149,14 @@ export const addIncomeDetailToProjectRepo = async (projectId: string, incomeDeta
             incomeDetail.invoiceNumber = await generateUniqueInvoiceNumber();
         }
 
-
         const project = await projectSchema.findByIdAndUpdate(
             projectId,
             { $push: { incomeDetails: incomeDetail } },
             { new: true }
         );
+
+        await recalculateProjectTotals(projectId);
+
         logger.info(`addIncomeDetailToProjectRepo: Added income detail: ${JSON.stringify(incomeDetail)}`);
         return project;
     } catch (error: any) {
@@ -165,7 +167,7 @@ export const addIncomeDetailToProjectRepo = async (projectId: string, incomeDeta
 
 export const addExpenseDetailToProjectRepo = async (projectId: string, expenseDetail: any) => {
     try {
-        logger.info(`Adding expense detail to project with id: ${projectId}`);
+        logger.info(`Adding expense detail to project with id: ${projectId}, expense detail: ${JSON.stringify(expenseDetail)}`);
 
          // Generate a unique invoice number if not provided
          if (!expenseDetail.invoiceNumber) {
@@ -177,6 +179,9 @@ export const addExpenseDetailToProjectRepo = async (projectId: string, expenseDe
             { $push: { expenseDetails: expenseDetail } },
             { new: true }
         );
+
+        await recalculateProjectTotals(projectId);
+
         logger.info(`addExpenseDetailToProjectRepo: Added expense detail: ${JSON.stringify(expenseDetail)}`);
         return project;
     } catch (error: any) {
@@ -193,6 +198,9 @@ export const addEmployeeDetailToProjectRepo = async (projectId: string, employee
             { $push: { employees: employeeDetail } },
             { new: true }
         );
+
+        await recalculateProjectTotals(projectId);
+
         logger.info(`addEmployeeDetailToProjectRepo: Added employee detail: ${JSON.stringify(employeeDetail)}`);
         return project;
     } catch (error: any) {
@@ -217,6 +225,8 @@ export const updateIncomeDetailInProjectRepo = async (projectId: string, incomeI
             { new: true }
         );
 
+        await recalculateProjectTotals(projectId);
+
         logger.info(`updateIncomeDetailInProjectRepo: Updated income detail with fields: ${JSON.stringify(updatedIncomeDetail)}`);
         return project;
     } catch (error: any) {
@@ -224,6 +234,7 @@ export const updateIncomeDetailInProjectRepo = async (projectId: string, incomeI
         throw new Error(error.message);
     }
 };
+
 export const updateExpenseDetailInProjectRepo = async (projectId: string, expenseId: string, updatedExpenseDetail: any) => {
     try {
         logger.info(`Updating expense detail with id: ${expenseId} in project with id: ${projectId}`);
@@ -240,6 +251,8 @@ export const updateExpenseDetailInProjectRepo = async (projectId: string, expens
             { new: true }
         );
 
+        await recalculateProjectTotals(projectId);
+
         logger.info(`updateExpenseDetailInProjectRepo: Updated expense detail with fields: ${JSON.stringify(updatedExpenseDetail)}`);
         return project;
     } catch (error: any) {
@@ -247,7 +260,6 @@ export const updateExpenseDetailInProjectRepo = async (projectId: string, expens
         throw new Error(error.message);
     }
 };
-
 
 export const updateEmployeeDetailInProjectRepo = async (projectId: string, employeeId: string, updatedEmployeeDetail: any) => {
     try {
@@ -257,6 +269,9 @@ export const updateEmployeeDetailInProjectRepo = async (projectId: string, emplo
             { $set: { "employees.$": updatedEmployeeDetail } },
             { new: true }
         );
+
+        await recalculateProjectTotals(projectId);
+
         logger.info(`updateEmployeeDetailInProjectRepo: Updated employee detail: ${JSON.stringify(updatedEmployeeDetail)}`);
         return project;
     } catch (error: any) {
@@ -273,6 +288,9 @@ export const removeIncomeDetailFromProjectRepo = async (projectId: string, incom
             { $pull: { incomeDetails: { _id: incomeId } } },
             { new: true }
         );
+
+        await recalculateProjectTotals(projectId);
+
         logger.info(`removeIncomeDetailFromProjectRepo: Removed income detail with id: ${incomeId}`);
         return project;
     } catch (error: any) {
@@ -289,6 +307,9 @@ export const removeExpenseDetailFromProjectRepo = async (projectId: string, expe
             { $pull: { expenseDetails: { _id: expenseId } } },
             { new: true }
         );
+
+        await recalculateProjectTotals(projectId);
+
         logger.info(`removeExpenseDetailFromProjectRepo: Removed expense detail with id: ${expenseId}`);
         return project;
     } catch (error: any) {
@@ -305,6 +326,9 @@ export const removeEmployeeDetailFromProjectRepo = async (projectId: string, emp
             { $pull: { employees: { _id: employeeId } } },
             { new: true }
         );
+
+        await recalculateProjectTotals(projectId);
+
         logger.info(`removeEmployeeDetailFromProjectRepo: Removed employee detail with id: ${employeeId}`);
         return project;
     } catch (error: any) {
@@ -335,4 +359,14 @@ const generateUniqueInvoiceNumber = async (): Promise<string> => {
     }
 
     return invoiceNumber;
+};
+
+const recalculateProjectTotals = async (projectId: string) => {
+    const project = await projectSchema.findById(projectId);
+
+    if (project) {
+        project.totalIncome = project.incomeDetails.reduce((sum: number, income: Income) => sum + income.amount, 0);
+        project.totalExpenses = project.expenseDetails.reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
+        await project.save();
+    }
 };

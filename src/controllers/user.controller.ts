@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { user } from '../models/user.model';
 import logger from '../utils/logger';
-import { addUserService, forgotPasswordService, getAllUsersService, loginUserService, ResetPasswordService } from '../services/user.services';
+import { addUserService, forgotPasswordService, getAllUsersService, loginUserService, ResetPasswordService, searchUsersService } from '../services/user.services';
 import { AppError, BadRequestError } from '../models/errors';
 import { generateAccessToken } from '../jwt/jwt';
 export const AddUser = async (req:Request, res:Response) => {
@@ -85,6 +85,23 @@ export const forgotPassword=async (req:Request,res:Response)=>{
         
         res.status(200).send({message:"Password reset link sent to your email"})
     } catch (error:any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+}
+
+export const searchUsers = async (req: Request, res: Response) => {
+    try {
+        let query = req.query.q as string;
+        if (!query) {
+            query="";
+        }
+        const response = await searchUsersService(query);
+        res.status(200).send(response);
+    } catch (error: any) {
         if (error instanceof AppError) {
             res.status(error.statusCode).send({ message: error.message });
         } else {

@@ -41,3 +41,26 @@ export const updateUserId = async (id: string, userData: any) => {
     }
 
 }
+
+export const searchUsersRepo = async (query: string) => {
+    try {
+        let users;
+        if (query === ""||query===" ") {
+            users = await userSchema.find({}, '_id name email');
+        } else {
+            users = await userSchema.find(
+                {
+                    $or: [
+                        { name: { $regex: query, $options: 'i' } },
+                        { email: { $regex: query, $options: 'i' } }
+                    ]
+                },
+                '_id name email'
+            );
+        }
+        return users;
+    } catch (error: any) {
+        logger.error(`Error in searchUsersRepo: ${error.message}`);
+        throw new Error(error.message);
+    }
+}

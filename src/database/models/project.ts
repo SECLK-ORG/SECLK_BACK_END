@@ -1,65 +1,85 @@
 import Status from "../../enums/status";
 import { Income, Expense, Project } from "../../models/common";
-
 import mongoose, { Schema, Document } from 'mongoose';
 import userSchema from './user';
+import logger from "../../utils/logger";
+
 const incomeSchema = new Schema<Income>({
     date: { type: Date, default: Date.now },
     amount: { type: Number, required: true },
     invoiceNumber: { type: String },
     receivedBy: { type: String },
     description: { type: String },
-  });
-  const employeeSchema = new Schema({
+});
+
+const employeeSchema = new Schema({
     employeeID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     employeeName: { type: String, required: true },
     email: { type: String, required: true },
-    projectStartDate: { type: Date, required: true }
+    projectStartDate: { type: Date, required: true },
+});
 
-  });
-  const expenseSchema = new Schema<Expense>({
+const expenseSchema = new Schema<Expense>({
     date: { type: Date, default: Date.now },
     amount: { type: Number, required: true },
     description: { type: String },
     vendor: { type: String },
-    category: { type: String, required: true }, 
-    invoiceNumber: { type: String }
-  });
-  
-  const projectSchema = new Schema<Project>({
+    category: { type: String, required: true },
+    invoiceNumber: { type: String },
+    employeeID: {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
+        name: { type: String, required: false },
+        email: { type: String, required: false },
+    },
+});
+
+interface ProjectWithTotalIncome extends Project {
+    totalIncome: number;
+}
+
+const projectSchema = new Schema<ProjectWithTotalIncome>({
     projectName: { type: String, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date },
     category: { type: String, required: true },
     status: { type: String, enum: Object.values(Status), required: true },
     totalIncome: { type: Number, default: 0 },
-    clientContactNumber:{ type: String, required: false },
-    clientEmail:{ type: String, required: false },
+    clientContactNumber: { type: String, required: false },
+    clientEmail: { type: String, required: false },
     totalExpenses: { type: Number, default: 0 },
     employees: [employeeSchema],
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     incomeDetails: [incomeSchema],
-    expenseDetails: [expenseSchema]
-  });
+    expenseDetails: [expenseSchema],
+});
 
-  
 projectSchema.pre('save', function (next) {
-  const project = this;
+    const project = this as any;
 
-  project.totalIncome = project.incomeDetails.reduce((sum, income) => sum + income.amount, 0);
+    project.totalIncome = project.incomeDetails.reduce((sum: number, income: Income) => sum + income.amount, 0);
 
-  project.totalExpenses = project.expenseDetails.reduce((sum, expense) => sum + expense.amount, 0);
+    project.totalExpenses = project.expenseDetails.reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
+    logger.info('Project total income and expenses calculated');
+    next();
+});
 
+projectSchema.pre('findOneAndUpdate', async function (next) {
+  const project = this as any;
+  const updatedProject = await project.model.findOne(this.getQuery()).exec();
+
+  updatedProject.totalIncome = updatedProject.incomeDetails.reduce((sum: number, income: Income) => sum + income.amount, 0);
+  updatedProject.totalExpenses = updatedProject.expenseDetails.reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
+
+  await updatedProject.save();
   next();
 });
 
-projectSchema.post('save', async function (doc) {
-  const userIds = doc.employees.map(emp => emp.employeeID);
-  await userSchema.updateMany(
-    { _id: { $in: userIds } },
-    { $addToSet: { assignedProjects: doc._id} }
-  );
+projectSchema.post('save', async function (doc: Document & { employees: any[] }) {
+    const userIds = doc.employees.map((emp: { employeeID: { _id: any; }; }) => emp.employeeID._id);
+    await userSchema.updateMany(
+        { _id: { $in: userIds } },
+        { $addToSet: { assignedProjects: doc._id } }
+    );
 });
 
-
-  export default mongoose.model<Project>('Project', projectSchema);
+export default mongoose.model<ProjectWithTotalIncome>('Project', projectSchema);

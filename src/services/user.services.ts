@@ -1,5 +1,5 @@
 import { user } from "../models/user.model";
-import { findUserByEmail, createUser, getAllUsers, updateUserId } from "../repository/user.repository";
+import { findUserByEmail, createUser, getAllUsers, updateUserId, searchUsersRepo } from "../repository/user.repository";
 import logger from "../utils/logger";
 import { responseFormate } from "../models/response";
 import bcrypt from 'bcrypt';
@@ -116,3 +116,18 @@ export const forgotPasswordService=async(email:string)=>{
    
 }
 
+export const searchUsersService = async (query: string) => {
+    try {
+        const users = await searchUsersRepo(query);
+        const response: responseFormate = {
+            code: 200,
+            data: users,
+            message: "Users Fetched"
+        };
+        return response;
+    } catch (error: any) {
+        logger.error(`Error in searchUsersService: ${error.message}`);
+        throw new Error(error.message);
+    }
+
+}

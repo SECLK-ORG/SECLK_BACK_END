@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AddUser, forgotPassword, GetallUser,loginUser, resetPassWord } from "../controllers/user.controller";
+import { AddUser, forgotPassword, GetallUser,loginUser, resetPassWord, searchUsers } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
 import {isAuth} from "../middleware/isAuth";
 
@@ -15,6 +15,40 @@ const userRouter = Router();
  *         description: A list of users
  */
 userRouter.get("/all",isAuth, GetallUser);
+
+/**
+ * @swagger
+ * /users/search:
+ *   get:
+ *     summary: Search users by query
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         description: Search query to find users by username or email
+ *     responses:
+ *       200:
+ *         description: A list of matching users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "60d0fe4f5311236168a109ca"
+ *                   username:
+ *                     type: string
+ *                     example: "Avishka Chanaka"
+ *                   email:
+ *                     type: string
+ *                     example: "avishkachanaka@gmail.com"
+ */
+userRouter.get("/search", isAuth, searchUsers);
+
 
 /**
  * @swagger
