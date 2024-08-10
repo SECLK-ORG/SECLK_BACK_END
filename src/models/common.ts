@@ -2,6 +2,7 @@ import mongoose, { Document } from 'mongoose';
 import Status from '../enums/status';
 import Roles from '../enums/roles';
 export interface Expense {
+    category: string;
     date: Date;
     amount: number;
     description?: string;
@@ -9,10 +10,12 @@ export interface Expense {
     invoiceNumber?: string;
   }
   export interface Income {
+    receivedBy: string;
     date: Date;
     amount: number;
+    invoiceNumber?: string;
     description?: string;
-    source?: string;
+    
   }
 export interface Employee {
   employeeID: mongoose.Types.ObjectId;

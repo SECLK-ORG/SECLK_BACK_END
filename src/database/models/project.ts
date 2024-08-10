@@ -6,20 +6,23 @@ import userSchema from './user';
 const incomeSchema = new Schema<Income>({
     date: { type: Date, default: Date.now },
     amount: { type: Number, required: true },
+    invoiceNumber: { type: String },
+    receivedBy: { type: String },
     description: { type: String },
-    source: { type: String }
   });
   const employeeSchema = new Schema({
     employeeID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     employeeName: { type: String, required: true },
     email: { type: String, required: true },
     projectStartDate: { type: Date, required: true }
+
   });
   const expenseSchema = new Schema<Expense>({
     date: { type: Date, default: Date.now },
     amount: { type: Number, required: true },
     description: { type: String },
     vendor: { type: String },
+    category: { type: String, required: true }, 
     invoiceNumber: { type: String }
   });
   
@@ -52,7 +55,6 @@ projectSchema.pre('save', function (next) {
 
 projectSchema.post('save', async function (doc) {
   const userIds = doc.employees.map(emp => emp.employeeID);
-
   await userSchema.updateMany(
     { _id: { $in: userIds } },
     { $addToSet: { assignedProjects: doc._id} }

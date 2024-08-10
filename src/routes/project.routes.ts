@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllProjects, createProject, getProjectStatusCount, updateProject, deleteProject, getProjectById, getEmployeeDetails, getExpenseDetails, getIncomeDetails } from '../controllers/project.controller';
+import { getAllProjects, createProject, getProjectStatusCount, updateProject, deleteProject, getProjectById, getEmployeeDetails, getExpenseDetails, getIncomeDetails, createEmployeeDetail, createExpenseDetail, createIncomeDetail, deleteEmployeeDetail, deleteExpenseDetail, deleteIncomeDetail, updateEmployeeDetail, updateExpenseDetail, updateIncomeDetail } from '../controllers/project.controller';
 import { isAuth } from "../middleware/isAuth";
 
 const projectRouter = Router();
@@ -299,6 +299,363 @@ projectRouter.get('/project/:id/expenseDetails', isAuth, getExpenseDetails);
  *         description: Internal server error
  */
 projectRouter.get('/project/:id/employeeDetails', isAuth, getEmployeeDetails);
+
+/**
+ * @swagger
+ * /projects/project/{id}/incomeDetails:
+ *   post:
+ *     summary: Add income detail to a project
+ *     description: Add a new income detail to the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-08-01"
+ *               amount:
+ *                 type: number
+ *                 example: 1000
+ *               description:
+ *                 type: string
+ *                 example: "Income description"
+ *               source:
+ *                 type: string
+ *                 example: "Income source"
+ *     responses:
+ *       200:
+ *         description: Income detail added successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.post('/project/:id/incomeDetails', createIncomeDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/expenseDetails:
+ *   post:
+ *     summary: Add expense detail to a project
+ *     description: Add a new expense detail to the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-08-01"
+ *               amount:
+ *                 type: number
+ *                 example: 500
+ *               description:
+ *                 type: string
+ *                 example: "Expense description"
+ *               vendor:
+ *                 type: string
+ *                 example: "Vendor name"
+ *               invoiceNumber:
+ *                 type: string
+ *                 example: "INV123456"
+ *     responses:
+ *       200:
+ *         description: Expense detail added successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.post('/project/:id/expenseDetails', createExpenseDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/employeeDetails:
+ *   post:
+ *     summary: Add employee detail to a project
+ *     description: Add a new employee detail to the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user:
+ *                 type: string
+ *                 example: "60c72b2f4f1a2c001c8e4f34"
+ *               employeeName:
+ *                 type: string
+ *                 example: "John Doe"
+ *               email:
+ *                 type: string
+ *                 example: "johndoe@example.com"
+ *               employeeID:
+ *                 type: string
+ *                 example: "EMP123456"
+ *               projectStartDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-08-01"
+ *     responses:
+ *       200:
+ *         description: Employee detail added successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.post('/project/:id/employeeDetails', createEmployeeDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/incomeDetails/{incomeId}:
+ *   put:
+ *     summary: Update income detail in a project
+ *     description: Update an existing income detail in the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: incomeId
+ *         required: true
+ *         description: The income detail ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-08-01"
+ *               amount:
+ *                 type: number
+ *                 example: 1200
+ *               description:
+ *                 type: string
+ *                 example: "Updated income description"
+ *               source:
+ *                 type: string
+ *                 example: "Updated income source"
+ *     responses:
+ *       200:
+ *         description: Income detail updated successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.put('/project/:id/incomeDetails/:incomeId', updateIncomeDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/expenseDetails/{expenseId}:
+ *   put:
+ *     summary: Update expense detail in a project
+ *     description: Update an existing expense detail in the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: expenseId
+ *         required: true
+ *         description: The expense detail ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-08-01"
+ *               amount:
+ *                 type: number
+ *                 example: 600
+ *               description:
+ *                 type: string
+ *                 example: "Updated expense description"
+ *               vendor:
+ *                 type: string
+ *                 example: "Updated Vendor name"
+ *               invoiceNumber:
+ *                 type: string
+ *                 example: "INV654321"
+ *     responses:
+ *       200:
+ *         description: Expense detail updated successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.put('/project/:id/expenseDetails/:expenseId', updateExpenseDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/employeeDetails/{employeeId}:
+ *   put:
+ *     summary: Update employee detail in a project
+ *     description: Update an existing employee detail in the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: employeeId
+ *         required: true
+ *         description: The employee detail ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user:
+ *                 type: string
+ *                 example: "60c72b2f4f1a2c001c8e4f34"
+ *               employeeName:
+ *                 type: string
+ *                 example: "John Doe"
+ *               email:
+ *                 type: string
+ *                 example: "johndoe@example.com"
+ *               employeeID:
+ *                 type: string
+ *                 example: "EMP123456"
+ *               projectStartDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-08-01"
+ *     responses:
+ *       200:
+ *         description: Employee detail updated successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.put('/project/:id/employeeDetails/:employeeId', updateEmployeeDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/incomeDetails/{incomeId}:
+ *   delete:
+ *     summary: Delete income detail from a project
+ *     description: Delete an existing income detail from the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: incomeId
+ *         required: true
+ *         description: The income detail ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Income detail deleted successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.delete('/project/:id/incomeDetails/:incomeId', deleteIncomeDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/expenseDetails/{expenseId}:
+ *   delete:
+ *     summary: Delete expense detail from a project
+ *     description: Delete an existing expense detail from the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: expenseId
+ *         required: true
+ *         description: The expense detail ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Expense detail deleted successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.delete('/project/:id/expenseDetails/:expenseId', deleteExpenseDetail);
+
+/**
+ * @swagger
+ * /projects/project/{id}/employeeDetails/{employeeId}:
+ *   delete:
+ *     summary: Delete employee detail from a project
+ *     description: Delete an existing employee detail from the specified project.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: employeeId
+ *         required: true
+ *         description: The employee detail ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Employee detail deleted successfully
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.delete('/project/:id/employeeDetails/:employeeId', deleteEmployeeDetail);
 /**
  * @swagger
  * /projects/update/{id}:

@@ -1,7 +1,7 @@
 import { AppError, BadRequestError } from "../models/errors";
 import { createProjectDto, updateProjectDto } from "../models/project.model";
 import { responseFormate } from "../models/response";
-import { createProjectRepo, getAllocatedProjectsByUserIdServiceRepo, getAllProjectsRepo, getProjectStatusCountRepo, updateProjectRepo, deleteProjectRepo, getProjectByIdRepo, getIncomeDetailsBYProjectIdRepo, getEmployeeDetailsBYProjectIdRepo, getExpenseDetailsBYProjectIdRepo } from "../repository/project.repository";
+import { createProjectRepo, getAllocatedProjectsByUserIdServiceRepo, getAllProjectsRepo, getProjectStatusCountRepo, updateProjectRepo, deleteProjectRepo, getProjectByIdRepo, getIncomeDetailsBYProjectIdRepo, getEmployeeDetailsBYProjectIdRepo, getExpenseDetailsBYProjectIdRepo, addIncomeDetailToProjectRepo, addEmployeeDetailToProjectRepo, addExpenseDetailToProjectRepo, removeEmployeeDetailFromProjectRepo, removeExpenseDetailFromProjectRepo, removeIncomeDetailFromProjectRepo, updateEmployeeDetailInProjectRepo, updateExpenseDetailInProjectRepo, updateIncomeDetailInProjectRepo } from "../repository/project.repository";
 import logger from "../utils/logger";
 
 export const getAllProjectsService = async () => {
@@ -158,3 +158,121 @@ export const getEmployeeDetailsByProjectId =async (projectId: string) => {
         throw new Error(error.message);
     }
 }
+
+export const addIncomeDetailToProject = async (projectId: string, incomeDetail: any) => {
+    try {
+        const project = await addIncomeDetailToProjectRepo(projectId, incomeDetail);
+        return {
+            code: 200,
+            data: project,
+            message: "Income detail added successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const addExpenseDetailToProject = async (projectId: string, expenseDetail: any) => {
+    try {
+        const project = await addExpenseDetailToProjectRepo(projectId, expenseDetail);
+        return {
+            code: 200,
+            data: project,
+            message: "Expense detail added successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const addEmployeeDetailToProject = async (projectId: string, employeeDetail: any) => {
+    try {
+        const project = await addEmployeeDetailToProjectRepo(projectId, employeeDetail);
+        return {
+            code: 200,
+            data: project,
+            message: "Employee detail added successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const updateIncomeDetailInProject = async (projectId: string, incomeId: string, updatedIncomeDetail: any) => {
+    try {
+        const project = await updateIncomeDetailInProjectRepo(projectId, incomeId, updatedIncomeDetail);
+        return {
+            code: 200,
+            data: project,
+            message: "Income detail updated successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const updateExpenseDetailInProject = async (projectId: string, expenseId: string, updatedExpenseDetail: any) => {
+    try {
+        const project = await updateExpenseDetailInProjectRepo(projectId, expenseId, updatedExpenseDetail);
+        return {
+            code: 200,
+            data: project,
+            message: "Expense detail updated successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const updateEmployeeDetailInProject = async (projectId: string, employeeId: string, updatedEmployeeDetail: any) => {
+    try {
+        const project = await updateEmployeeDetailInProjectRepo(projectId, employeeId, updatedEmployeeDetail);
+        return {
+            code: 200,
+            data: project,
+            message: "Employee detail updated successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const removeIncomeDetailFromProject = async (projectId: string, incomeId: string) => {
+    try {
+        const project = await removeIncomeDetailFromProjectRepo(projectId, incomeId);
+        return {
+            code: 200,
+            data: project,
+            message: "Income detail deleted successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const removeExpenseDetailFromProject = async (projectId: string, expenseId: string) => {
+    try {
+        const project = await removeExpenseDetailFromProjectRepo(projectId, expenseId);
+        return {
+            code: 200,
+            data: project,
+            message: "Expense detail deleted successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
+export const removeEmployeeDetailFromProject = async (projectId: string, employeeId: string) => {
+    try {
+        const project = await removeEmployeeDetailFromProjectRepo(projectId, employeeId);
+        return {
+            code: 200,
+            data: project,
+            message: "Employee detail deleted successfully"
+        };
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+

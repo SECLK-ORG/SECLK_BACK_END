@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import logger from "../utils/logger";
-import { createProjectService, getAllocatedProjectsByUserIdService, getAllProjectsService, getProjectStatusCountService, updateProjectService, deleteProjectService, getProjectByIdService, getIncomeDetailsByProjectId, getExpenseDetailsByProjectId, getEmployeeDetailsByProjectId } from "../services/project.services";
+import { createProjectService, getAllocatedProjectsByUserIdService, getAllProjectsService, getProjectStatusCountService, updateProjectService, deleteProjectService, getProjectByIdService, getIncomeDetailsByProjectId, getExpenseDetailsByProjectId, getEmployeeDetailsByProjectId, addEmployeeDetailToProject, addExpenseDetailToProject, addIncomeDetailToProject, removeEmployeeDetailFromProject, removeExpenseDetailFromProject, removeIncomeDetailFromProject, updateEmployeeDetailInProject, updateExpenseDetailInProject, updateIncomeDetailInProject } from "../services/project.services";
 import { AppError, BadRequestError } from "../models/errors";
 import { createProjectDto, updateProjectDto } from "../models/project.model";
 import Jwt from "jsonwebtoken";
@@ -146,3 +146,135 @@ export const getEmployeeDetails= async (req: Request, res: Response) => {
         }
     }
 }
+
+export const createIncomeDetail = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const incomeDetail = req.body;
+        const response = await addIncomeDetailToProject(id, incomeDetail);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const createExpenseDetail = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const expenseDetail = req.body;
+        const response = await addExpenseDetailToProject(id, expenseDetail);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const createEmployeeDetail = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const employeeDetail = req.body;
+        const response = await addEmployeeDetailToProject(id, employeeDetail);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const updateIncomeDetail = async (req: Request, res: Response) => {
+    try {
+        const { id, incomeId } = req.params;
+        const updatedIncomeDetail = req.body;
+        const response = await updateIncomeDetailInProject(id, incomeId, updatedIncomeDetail);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const updateExpenseDetail = async (req: Request, res: Response) => {
+    try {
+        const { id, expenseId } = req.params;
+        const updatedExpenseDetail = req.body;
+        const response = await updateExpenseDetailInProject(id, expenseId, updatedExpenseDetail);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const updateEmployeeDetail = async (req: Request, res: Response) => {
+    try {
+        const { id, employeeId } = req.params;
+        const updatedEmployeeDetail = req.body;
+        const response = await updateEmployeeDetailInProject(id, employeeId, updatedEmployeeDetail);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const deleteIncomeDetail = async (req: Request, res: Response) => {
+    try {
+        const { id, incomeId } = req.params;
+        const response = await removeIncomeDetailFromProject(id, incomeId);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const deleteExpenseDetail = async (req: Request, res: Response) => {
+    try {
+        const { id, expenseId } = req.params;
+        const response = await removeExpenseDetailFromProject(id, expenseId);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
+
+export const deleteEmployeeDetail = async (req: Request, res: Response) => {
+    try {
+        const { id, employeeId } = req.params;
+        const response = await removeEmployeeDetailFromProject(id, employeeId);
+        res.status(response.code).send(response);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    }
+};
