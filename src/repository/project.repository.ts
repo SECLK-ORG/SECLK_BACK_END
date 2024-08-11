@@ -192,7 +192,7 @@ export const addExpenseDetailToProjectRepo = async (projectId: string, expenseDe
 
 export const addEmployeeDetailToProjectRepo = async (projectId: string, employeeDetail: any) => {
     try {
-        logger.info(`Adding employee detail to project with id: ${projectId}`);
+        logger.info(`Adding employee detail to project with id: ${projectId} and employee detail: ${JSON.stringify(employeeDetail)}`);
         const project = await projectSchema.findByIdAndUpdate(
             projectId,
             { $push: { employees: employeeDetail } },
@@ -368,5 +368,70 @@ const recalculateProjectTotals = async (projectId: string) => {
         project.totalIncome = project.incomeDetails.reduce((sum: number, income: Income) => sum + income.amount, 0);
         project.totalExpenses = project.expenseDetails.reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
         await project.save();
+    }
+};
+
+export const getProjectFinancialSummaryRepo = async (projectId: string) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(projectId);
+        const currentMonth = new Date().getMonth() + 1; // JavaScript months are 0-based, so we add 1
+        const currentYear = new Date().getFullYear();
+
+        const projectFinancial = await projectSchema.aggregate([
+            { $match: { _id: objectId } },
+            {
+                $project: {
+                    totalIncome: { $sum: "$incomeDetails.amount" },
+                    totalExpenses: { $sum: "$expenseDetails.amount" },
+                    agreedAmount: 1, // Include the agreedAmount in the projection
+                    incomeCurrentMonth: {
+                        $sum: {
+                            $map: {
+                                input: {
+                                    $filter: {
+                                        input: "$incomeDetails",
+                                        as: "income",
+                                        cond: {
+                                            $and: [
+                                                { $eq: [{ $month: "$$income.date" }, currentMonth] },
+                                                { $eq: [{ $year: "$$income.date" }, currentYear] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                as: "income",
+                                in: "$$income.amount"
+                            }
+                        }
+                    },
+                    expensesCurrentMonth: {
+                        $sum: {
+                            $map: {
+                                input: {
+                                    $filter: {
+                                        input: "$expenseDetails",
+                                        as: "expense",
+                                        cond: {
+                                            $and: [
+                                                { $eq: [{ $month: "$$expense.date" }, currentMonth] },
+                                                { $eq: [{ $year: "$$expense.date" }, currentYear] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                as: "expense",
+                                in: "$$expense.amount"
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
+
+        logger.info(`getProjectFinancialSummaryRepo: Retrieved financial summary for project ID ${projectId}`);
+        return projectFinancial[0];
+    } catch (error: any) {
+        logger.error(`Error in getProjectFinancialSummaryRepo: ${error.message}`);
+        throw new Error(error.message);
     }
 };

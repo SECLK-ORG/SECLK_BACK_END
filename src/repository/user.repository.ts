@@ -46,7 +46,7 @@ export const searchUsersRepo = async (query: string) => {
     try {
         let users;
         if (query === ""||query===" ") {
-            users = await userSchema.find({}, '_id name email');
+            users = await userSchema.find({}, '_id name email position');
         } else {
             users = await userSchema.find(
                 {
@@ -55,7 +55,7 @@ export const searchUsersRepo = async (query: string) => {
                         { email: { $regex: query, $options: 'i' } }
                     ]
                 },
-                '_id name email'
+                '_id name email position'
             );
         }
         return users;

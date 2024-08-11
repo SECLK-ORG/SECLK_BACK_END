@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllProjects, createProject, getProjectStatusCount, updateProject, deleteProject, getProjectById, getEmployeeDetails, getExpenseDetails, getIncomeDetails, createEmployeeDetail, createExpenseDetail, createIncomeDetail, deleteEmployeeDetail, deleteExpenseDetail, deleteIncomeDetail, updateEmployeeDetail, updateExpenseDetail, updateIncomeDetail } from '../controllers/project.controller';
+import { getAllProjects, createProject, getProjectStatusCount, updateProject, deleteProject, getProjectById, getEmployeeDetails, getExpenseDetails, getIncomeDetails, createEmployeeDetail, createExpenseDetail, createIncomeDetail, deleteEmployeeDetail, deleteExpenseDetail, deleteIncomeDetail, updateEmployeeDetail, updateExpenseDetail, updateIncomeDetail, getProjectFinancialSummary } from '../controllers/project.controller';
 import { isAuth } from "../middleware/isAuth";
 
 const projectRouter = Router();
@@ -299,7 +299,34 @@ projectRouter.get('/project/:id/expenseDetails', isAuth, getExpenseDetails);
  *         description: Internal server error
  */
 projectRouter.get('/project/:id/employeeDetails', isAuth, getEmployeeDetails);
-
+/**
+ * @swagger
+ * /projects/project/{id}/Summary:
+ *   get:
+ *     summary: Get employee details by project ID
+ *     description: Retrieve the ProjectFinancialSummary.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The project ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Project Financial Summary
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                
+ *       404:
+ *         description: Project not found
+ *       500:
+ *         description: Internal server error
+ */
+projectRouter.get('/project/:id/Summary', isAuth, getProjectFinancialSummary);
 /**
  * @swagger
  * /projects/project/{id}/incomeDetails:

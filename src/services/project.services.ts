@@ -1,7 +1,7 @@
 import { AppError, BadRequestError } from "../models/errors";
 import { createProjectDto, updateProjectDto } from "../models/project.model";
 import { responseFormate } from "../models/response";
-import { createProjectRepo, getAllocatedProjectsByUserIdServiceRepo, getAllProjectsRepo, getProjectStatusCountRepo, updateProjectRepo, deleteProjectRepo, getProjectByIdRepo, getIncomeDetailsBYProjectIdRepo, getEmployeeDetailsBYProjectIdRepo, getExpenseDetailsBYProjectIdRepo, addIncomeDetailToProjectRepo, addEmployeeDetailToProjectRepo, addExpenseDetailToProjectRepo, removeEmployeeDetailFromProjectRepo, removeExpenseDetailFromProjectRepo, removeIncomeDetailFromProjectRepo, updateEmployeeDetailInProjectRepo, updateExpenseDetailInProjectRepo, updateIncomeDetailInProjectRepo } from "../repository/project.repository";
+import { createProjectRepo, getAllocatedProjectsByUserIdServiceRepo, getAllProjectsRepo, getProjectStatusCountRepo, updateProjectRepo, deleteProjectRepo, getProjectByIdRepo, getIncomeDetailsBYProjectIdRepo, getEmployeeDetailsBYProjectIdRepo, getExpenseDetailsBYProjectIdRepo, addIncomeDetailToProjectRepo, addEmployeeDetailToProjectRepo, addExpenseDetailToProjectRepo, removeEmployeeDetailFromProjectRepo, removeExpenseDetailFromProjectRepo, removeIncomeDetailFromProjectRepo, updateEmployeeDetailInProjectRepo, updateExpenseDetailInProjectRepo, updateIncomeDetailInProjectRepo, getProjectFinancialSummaryRepo } from "../repository/project.repository";
 import logger from "../utils/logger";
 
 export const getAllProjectsService = async () => {
@@ -276,3 +276,39 @@ export const removeEmployeeDetailFromProject = async (projectId: string, employe
     }
 };
 
+export const getProjectFinancialSummaryService = async (projectId: string) => {
+    try {
+        const project = await getProjectFinancialSummaryRepo(projectId);
+
+        // Calculate additional data
+        const remainingExpenses = project.totalIncome - project.totalExpenses;
+        const remainingIncome = project.agreedAmount - project.totalIncome;
+        const totalProfit = project.totalIncome - project.totalExpenses;
+        const currentMonthProfit = project.incomeCurrentMonth - project.expensesCurrentMonth;
+
+        // Calculate percentages
+        const ExpensesPercentage = (project.totalExpenses / project.totalIncome) * 100;
+        const IncomePercentage = (project.totalIncome / project.agreedAmount) * 100;
+
+        // Add these calculations to the project object or create a new response object
+        const financialSummary = {
+            ...project,
+            remainingExpenses,
+            remainingIncome,
+            totalProfit,
+            currentMonthProfit,
+            ExpensesPercentage,
+            IncomePercentage
+        };
+
+        const response: responseFormate = {
+            code: 200,
+            data: financialSummary,
+            message: "Financial Summary Fetched"
+        };
+        return response;
+
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import logger from "../utils/logger";
-import { createProjectService, getAllocatedProjectsByUserIdService, getAllProjectsService, getProjectStatusCountService, updateProjectService, deleteProjectService, getProjectByIdService, getIncomeDetailsByProjectId, getExpenseDetailsByProjectId, getEmployeeDetailsByProjectId, addEmployeeDetailToProject, addExpenseDetailToProject, addIncomeDetailToProject, removeEmployeeDetailFromProject, removeExpenseDetailFromProject, removeIncomeDetailFromProject, updateEmployeeDetailInProject, updateExpenseDetailInProject, updateIncomeDetailInProject } from "../services/project.services";
+import { createProjectService, getAllocatedProjectsByUserIdService, getAllProjectsService, getProjectStatusCountService, updateProjectService, deleteProjectService, getProjectByIdService, getIncomeDetailsByProjectId, getExpenseDetailsByProjectId, getEmployeeDetailsByProjectId, addEmployeeDetailToProject, addExpenseDetailToProject, addIncomeDetailToProject, removeEmployeeDetailFromProject, removeExpenseDetailFromProject, removeIncomeDetailFromProject, updateEmployeeDetailInProject, updateExpenseDetailInProject, updateIncomeDetailInProject, getProjectFinancialSummaryService } from "../services/project.services";
 import { AppError, BadRequestError } from "../models/errors";
 import { createProjectDto, updateProjectDto } from "../models/project.model";
 import Jwt from "jsonwebtoken";
@@ -278,3 +278,15 @@ export const deleteEmployeeDetail = async (req: Request, res: Response) => {
         }
     }
 };
+
+export const getProjectFinancialSummary = async (req: Request, res: Response) => {
+    try {
+        const projectId = req.params.id;
+        const Response = await getProjectFinancialSummaryService(projectId);
+
+        res.status(200).send(Response);
+    } catch (error: any) {
+        logger.error(`Error in getProjectFinancialSummary: ${error.message}`);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+}

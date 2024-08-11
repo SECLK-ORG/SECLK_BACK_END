@@ -16,7 +16,8 @@ const employeeSchema = new Schema({
     employeeID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     employeeName: { type: String, required: true },
     email: { type: String, required: true },
-    projectStartDate: { type: Date, required: true },
+    position: { type: String, required: false },
+    projectStartedDate: { type: Date, default: Date.now ,required: true },
 });
 
 const expenseSchema = new Schema<Expense>({
@@ -33,11 +34,11 @@ const expenseSchema = new Schema<Expense>({
     },
 });
 
-interface ProjectWithTotalIncome extends Project {
-    totalIncome: number;
-}
+// interface ProjectWithTotalIncome extends Project {
+//     totalIncome: number;
+// }
 
-const projectSchema = new Schema<ProjectWithTotalIncome>({
+const projectSchema = new Schema<Project>({
     projectName: { type: String, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date },
@@ -82,4 +83,4 @@ projectSchema.post('save', async function (doc: Document & { employees: any[] })
     );
 });
 
-export default mongoose.model<ProjectWithTotalIncome>('Project', projectSchema);
+export default mongoose.model<Project>('Project', projectSchema);

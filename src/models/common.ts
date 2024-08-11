@@ -37,6 +37,7 @@ export interface Project extends Document {
   endDate?: Date;
   category: string;
   status: Status;
+  agreedAmount: number;
   clientContactNumber?: string;
   clientEmail?: string;
   totalIncome: number;
