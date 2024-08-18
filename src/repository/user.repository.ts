@@ -1,6 +1,8 @@
 import { user } from "../models/user.model";
 import userSchema from '../database/models/user';
 import logger from "../utils/logger";
+import { EmployeePayloadDto } from "../models/common";
+import { ConflictError } from "../models/errors";
 
 export const createUser = async (userData: user) => {
     try {
@@ -31,16 +33,7 @@ export const getAllUsers = async () => {
         throw new Error(error.message);
     }
 }
-export const updateUserId = async (id: string, userData: any) => {
-    try {
-        const updatedUser = await userSchema.findOneAndUpdate({ _id: id }, userData, { new: true });
-        return updatedUser;
-    } catch (error: any) {
-        logger.error(`Error in updateUser: ${error.message}`);
-        throw new Error(error.message);
-    }
 
-}
 
 export const searchUsersRepo = async (query: string) => {
     try {
@@ -64,3 +57,55 @@ export const searchUsersRepo = async (query: string) => {
         throw new Error(error.message);
     }
 }
+
+export const updateUserId = async (id: string, userData: EmployeePayloadDto) => {
+    try {
+        logger.info(`Repository: Finding and updating user ID: ${id}`);
+
+        const updatedUser = await userSchema.findOneAndUpdate({ _id: id }, userData, { new: true });
+
+        if (updatedUser) {
+            logger.info(`Repository: User updated successfully, ID: ${id}`);
+        } else {
+            logger.warn(`Repository: User not found, ID: ${id}`);
+        }
+
+        return updatedUser;
+    } catch (error: any) {
+        logger.error(`Repository: Error updating user, ID: ${id}`, error);
+        throw new Error(error.message);
+    }
+};
+
+export const deleteUserRepo = async (userId: string) => {
+    try {
+        logger.info(`Repository: deleteUserRepo - Checking if user with ID: ${userId} has assigned projects`);
+
+        // Check if the user has any assigned projects
+        const user = await userSchema.findById(userId);
+        if (!user) {
+            logger.warn(`Repository: deleteUserRepo - User with ID: ${userId} not found`);
+            return null;
+        }
+
+        if (user.assignedProjects.length > 0) {
+            logger.warn(`Repository: deleteUserRepo - User with ID: ${userId} has assigned projects. Aborting deletion.`);
+            throw new ConflictError('User has assigned projects and cannot be deleted.');
+        }
+
+        logger.info(`Repository: deleteUserRepo - No assigned projects found for user with ID: ${userId}. Proceeding with deletion.`);
+
+        const deletedUser = await userSchema.findByIdAndDelete(userId);
+
+        if (deletedUser) {
+            logger.info(`Repository: deleteUserRepo - User with ID: ${userId} deleted successfully`);
+        } else {
+            logger.warn(`Repository: deleteUserRepo - User with ID: ${userId} not found`);
+        }
+
+        return deletedUser;
+    } catch (error: any) {
+        logger.error(`Repository: deleteUserRepo - Error deleting user with ID: ${userId} - ${error.message}`);
+        throw new Error(error.message);
+    }
+};

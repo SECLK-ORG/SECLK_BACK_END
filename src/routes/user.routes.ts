@@ -1,26 +1,37 @@
 import { Router } from "express";
-import { AddUser, forgotPassword, GetallUser,loginUser, resetPassWord, searchUsers } from "../controllers/user.controller";
+import { AddUser, deleteUser, forgotPassword, GetallUser, loginUser, resetPassWord, searchUsers, updateUser } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
-import {isAuth} from "../middleware/isAuth";
+import { isAuth } from "../middleware/isAuth";
 
 const userRouter = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management and operations
+ */
 
 /**
  * @swagger
  * /users/all:
  *   get:
  *     summary: Retrieve a list of users
+ *     tags: 
+ *       - Users
  *     responses:
  *       200:
  *         description: A list of users
  */
-userRouter.get("/all",isAuth, GetallUser);
+userRouter.get("/all", isAuth, GetallUser);
 
 /**
  * @swagger
  * /users/search:
  *   get:
  *     summary: Search users by query
+ *     tags: 
+ *       - Users
  *     parameters:
  *       - in: query
  *         name: q
@@ -49,12 +60,13 @@ userRouter.get("/all",isAuth, GetallUser);
  */
 userRouter.get("/search", isAuth, searchUsers);
 
-
 /**
  * @swagger
  * /users:
  *   post:
  *     summary: Add a new user
+ *     tags: 
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -122,13 +134,15 @@ userRouter.get("/search", isAuth, searchUsers);
  *                   type: string
  *                   example: "User Created"
  */
+userRouter.post("/", isAuth, addUserValidation, AddUser);
 
-userRouter.post("/",isAuth,addUserValidation,AddUser );
 /**
  * @swagger
  * /users/signIn:
  *   post:
  *     summary: Login user
+ *     tags: 
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -152,12 +166,13 @@ userRouter.post("/",isAuth,addUserValidation,AddUser );
  */
 userRouter.post("/signIn", loginUser);
 
-
 /**
  * @swagger
  * /users/resetPassword:
  *   put:
  *     summary: Reset user password
+ *     tags: 
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -184,14 +199,15 @@ userRouter.post("/signIn", loginUser);
  *       500:
  *         description: Internal server error
  */
-userRouter.put("/resetPassword",resetPassWord);
-
+userRouter.put("/resetPassword", resetPassWord);
 
 /**
  * @swagger
  * /users/forgotPassword:
  *   post:
- *     summary: forgot Password user 
+ *     summary: Forgot Password user 
+ *     tags: 
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -212,10 +228,82 @@ userRouter.put("/resetPassword",resetPassWord);
  *       500:
  *         description: Internal server error
  */
-userRouter.post("/forgotPassword",forgotPassword)
+userRouter.post("/forgotPassword", forgotPassword);
 
-
-
-
-    
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Update an existing user
+ *     tags: 
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Updated Name"
+ *               email:
+ *                 type: string
+ *                 example: "updatedemail@example.com"
+ *               role:
+ *                 type: string
+ *                 example: "user"
+ *               contactNumber:
+ *                 type: string
+ *                 example: "0777123456"
+ *               workLocation:
+ *                 type: string
+ *                 example: "Office"
+ *               startDate:
+ *                 type: string
+ *                 example: "2024-08-18"
+ *               status:
+ *                 type: string
+ *                 example: "inactive"
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       404:
+ *         description: User not found
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.put("/:id", isAuth, updateUser);
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     tags: 
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.delete("/:id", isAuth, deleteUser);
 export default userRouter;

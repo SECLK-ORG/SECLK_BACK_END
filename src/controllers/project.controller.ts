@@ -181,6 +181,7 @@ export const createEmployeeDetail = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const employeeDetail = req.body;
+        logger.info(`createEmployeeDetailController: Received employee detail: ${JSON.stringify(employeeDetail)} for project with ID: ${id}`);
         const response = await addEmployeeDetailToProject(id, employeeDetail);
         res.status(response.code).send(response);
     } catch (error: any) {

@@ -4,6 +4,7 @@ import Status from '../enums/status';
 import { createProjectDto, updateProjectDto } from '../models/project.model';
 import logger from '../utils/logger';
 import { Income, Expense } from '../models/common';
+import { ConflictError } from '../models/errors';
 
 export const getAllProjectsRepo = async () => {
     try {
@@ -192,8 +193,24 @@ export const addExpenseDetailToProjectRepo = async (projectId: string, expenseDe
 
 export const addEmployeeDetailToProjectRepo = async (projectId: string, employeeDetail: any) => {
     try {
-        logger.info(`Adding employee detail to project with id: ${projectId} and employee detail: ${JSON.stringify(employeeDetail)}`);
-        const project = await projectSchema.findByIdAndUpdate(
+        // logger.info(`Adding employee detail to project with id: ${projectId} and employee detail: ${JSON.stringify(employeeDetail)}`);
+
+        // Fetch the project to check if the employee already exists
+        const project = await projectSchema.findById(projectId).select('employees');
+        if (!project) {
+            throw new Error("Project not found");
+        }
+        logger.info(`employeeDetail.employeeID._id: ${employeeDetail.employeeID._id},project:${project}`);
+
+        // Check if the employee already exists in the project's employees array by comparing employeeID
+        const employeeExists = project.employees.some((employee: any) => employee.employeeID._id.toString() === employeeDetail.employeeID._id);
+        logger.info(`employeeExists: ${employeeExists}`);
+        if (employeeExists) {
+            throw new ConflictError("This employee is already added to the project");
+        }
+
+        // If the employee does not exist, add them to the project
+        const updatedProject = await projectSchema.findByIdAndUpdate(
             projectId,
             { $push: { employees: employeeDetail } },
             { new: true }
@@ -201,8 +218,8 @@ export const addEmployeeDetailToProjectRepo = async (projectId: string, employee
 
         await recalculateProjectTotals(projectId);
 
-        logger.info(`addEmployeeDetailToProjectRepo: Added employee detail: ${JSON.stringify(employeeDetail)}`);
-        return project;
+        // logger.info(`addEmployeeDetailToProjectRepo: Added employee detail: ${JSON.stringify(employeeDetail)}`);
+        return updatedProject;
     } catch (error: any) {
         logger.error(`Error adding employee detail: ${error.message}`);
         throw new Error(error.message);

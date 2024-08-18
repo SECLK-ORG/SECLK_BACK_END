@@ -1,6 +1,6 @@
 enum UserStatus {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
+    ACTIVE = 'Active',
+    INACTIVE = 'Inactive',
     }
     
     export default UserStatus;

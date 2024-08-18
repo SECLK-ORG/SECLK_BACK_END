@@ -1,8 +1,35 @@
 import { Router } from "express";
-import { getAllProjects, createProject, getProjectStatusCount, updateProject, deleteProject, getProjectById, getEmployeeDetails, getExpenseDetails, getIncomeDetails, createEmployeeDetail, createExpenseDetail, createIncomeDetail, deleteEmployeeDetail, deleteExpenseDetail, deleteIncomeDetail, updateEmployeeDetail, updateExpenseDetail, updateIncomeDetail, getProjectFinancialSummary } from '../controllers/project.controller';
+import {
+  getAllProjects,
+  createProject,
+  getProjectStatusCount,
+  updateProject,
+  deleteProject,
+  getProjectById,
+  getEmployeeDetails,
+  getExpenseDetails,
+  getIncomeDetails,
+  createEmployeeDetail,
+  createExpenseDetail,
+  createIncomeDetail,
+  deleteEmployeeDetail,
+  deleteExpenseDetail,
+  deleteIncomeDetail,
+  updateEmployeeDetail,
+  updateExpenseDetail,
+  updateIncomeDetail,
+  getProjectFinancialSummary
+} from '../controllers/project.controller';
 import { isAuth } from "../middleware/isAuth";
 
 const projectRouter = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Projects
+ *   description: API endpoints for managing projects
+ */
 
 /**
  * @swagger
@@ -10,6 +37,8 @@ const projectRouter = Router();
  *   get:
  *     summary: Get all projects
  *     description: Retrieve a list of all projects.
+ *     tags: 
+ *       - Projects
  *     responses:
  *       200:
  *         description: A list of projects
@@ -42,6 +71,8 @@ projectRouter.get('/all', isAuth, getAllProjects);
  *   post:
  *     summary: Create a new project
  *     description: Create a new project with the provided details.
+ *     tags: 
+ *       - Projects
  *     requestBody:
  *       required: true
  *       content:
@@ -131,6 +162,8 @@ projectRouter.post('/create', isAuth, createProject);
  *   get:
  *     summary: Get project counts by status
  *     description: Retrieve the count of projects based on their status.
+ *     tags: 
+ *       - Projects
  *     responses:
  *       200:
  *         description: Projects fetched successfully
@@ -162,6 +195,8 @@ projectRouter.get('/getProjectStatusCount', isAuth, getProjectStatusCount);
  *   get:
  *     summary: Get income details by project ID
  *     description: Retrieve the income details associated with a specific project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -208,6 +243,8 @@ projectRouter.get('/project/:id/incomeDetails', isAuth, getIncomeDetails);
  *   get:
  *     summary: Get expense details by project ID
  *     description: Retrieve the expense details associated with a specific project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -257,6 +294,8 @@ projectRouter.get('/project/:id/expenseDetails', isAuth, getExpenseDetails);
  *   get:
  *     summary: Get employee details by project ID
  *     description: Retrieve the employee details associated with a specific project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -299,12 +338,15 @@ projectRouter.get('/project/:id/expenseDetails', isAuth, getExpenseDetails);
  *         description: Internal server error
  */
 projectRouter.get('/project/:id/employeeDetails', isAuth, getEmployeeDetails);
+
 /**
  * @swagger
  * /projects/project/{id}/Summary:
  *   get:
- *     summary: Get employee details by project ID
- *     description: Retrieve the ProjectFinancialSummary.
+ *     summary: Get project financial summary by project ID
+ *     description: Retrieve the project financial summary by project ID.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -314,25 +356,36 @@ projectRouter.get('/project/:id/employeeDetails', isAuth, getEmployeeDetails);
  *           type: string
  *     responses:
  *       200:
- *         description: Project Financial Summary
+ *         description: Project financial summary fetched successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                
+ *                 totalIncome:
+ *                   type: number
+ *                   example: 50000
+ *                 totalExpenses:
+ *                   type: number
+ *                   example: 20000
+ *                 totalProfit:
+ *                   type: number
+ *                   example: 30000
  *       404:
  *         description: Project not found
  *       500:
  *         description: Internal server error
  */
 projectRouter.get('/project/:id/Summary', isAuth, getProjectFinancialSummary);
+
 /**
  * @swagger
  * /projects/project/{id}/incomeDetails:
  *   post:
  *     summary: Add income detail to a project
  *     description: Add a new income detail to the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -366,7 +419,7 @@ projectRouter.get('/project/:id/Summary', isAuth, getProjectFinancialSummary);
  *       500:
  *         description: Internal server error
  */
-projectRouter.post('/project/:id/incomeDetails', createIncomeDetail);
+projectRouter.post('/project/:id/incomeDetails', isAuth, createIncomeDetail);
 
 /**
  * @swagger
@@ -374,6 +427,8 @@ projectRouter.post('/project/:id/incomeDetails', createIncomeDetail);
  *   post:
  *     summary: Add expense detail to a project
  *     description: Add a new expense detail to the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -410,7 +465,7 @@ projectRouter.post('/project/:id/incomeDetails', createIncomeDetail);
  *       500:
  *         description: Internal server error
  */
-projectRouter.post('/project/:id/expenseDetails', createExpenseDetail);
+projectRouter.post('/project/:id/expenseDetails', isAuth, createExpenseDetail);
 
 /**
  * @swagger
@@ -418,6 +473,8 @@ projectRouter.post('/project/:id/expenseDetails', createExpenseDetail);
  *   post:
  *     summary: Add employee detail to a project
  *     description: Add a new employee detail to the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -454,7 +511,7 @@ projectRouter.post('/project/:id/expenseDetails', createExpenseDetail);
  *       500:
  *         description: Internal server error
  */
-projectRouter.post('/project/:id/employeeDetails', createEmployeeDetail);
+projectRouter.post('/project/:id/employeeDetails', isAuth, createEmployeeDetail);
 
 /**
  * @swagger
@@ -462,6 +519,8 @@ projectRouter.post('/project/:id/employeeDetails', createEmployeeDetail);
  *   put:
  *     summary: Update income detail in a project
  *     description: Update an existing income detail in the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -501,7 +560,7 @@ projectRouter.post('/project/:id/employeeDetails', createEmployeeDetail);
  *       500:
  *         description: Internal server error
  */
-projectRouter.put('/project/:id/incomeDetails/:incomeId', updateIncomeDetail);
+projectRouter.put('/project/:id/incomeDetails/:incomeId', isAuth, updateIncomeDetail);
 
 /**
  * @swagger
@@ -509,6 +568,8 @@ projectRouter.put('/project/:id/incomeDetails/:incomeId', updateIncomeDetail);
  *   put:
  *     summary: Update expense detail in a project
  *     description: Update an existing expense detail in the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -551,7 +612,7 @@ projectRouter.put('/project/:id/incomeDetails/:incomeId', updateIncomeDetail);
  *       500:
  *         description: Internal server error
  */
-projectRouter.put('/project/:id/expenseDetails/:expenseId', updateExpenseDetail);
+projectRouter.put('/project/:id/expenseDetails/:expenseId', isAuth, updateExpenseDetail);
 
 /**
  * @swagger
@@ -559,6 +620,8 @@ projectRouter.put('/project/:id/expenseDetails/:expenseId', updateExpenseDetail)
  *   put:
  *     summary: Update employee detail in a project
  *     description: Update an existing employee detail in the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -601,7 +664,7 @@ projectRouter.put('/project/:id/expenseDetails/:expenseId', updateExpenseDetail)
  *       500:
  *         description: Internal server error
  */
-projectRouter.put('/project/:id/employeeDetails/:employeeId', updateEmployeeDetail);
+projectRouter.put('/project/:id/employeeDetails/:employeeId', isAuth, updateEmployeeDetail);
 
 /**
  * @swagger
@@ -609,6 +672,8 @@ projectRouter.put('/project/:id/employeeDetails/:employeeId', updateEmployeeDeta
  *   delete:
  *     summary: Delete income detail from a project
  *     description: Delete an existing income detail from the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -628,7 +693,7 @@ projectRouter.put('/project/:id/employeeDetails/:employeeId', updateEmployeeDeta
  *       500:
  *         description: Internal server error
  */
-projectRouter.delete('/project/:id/incomeDetails/:incomeId', deleteIncomeDetail);
+projectRouter.delete('/project/:id/incomeDetails/:incomeId', isAuth, deleteIncomeDetail);
 
 /**
  * @swagger
@@ -636,6 +701,8 @@ projectRouter.delete('/project/:id/incomeDetails/:incomeId', deleteIncomeDetail)
  *   delete:
  *     summary: Delete expense detail from a project
  *     description: Delete an existing expense detail from the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -655,7 +722,7 @@ projectRouter.delete('/project/:id/incomeDetails/:incomeId', deleteIncomeDetail)
  *       500:
  *         description: Internal server error
  */
-projectRouter.delete('/project/:id/expenseDetails/:expenseId', deleteExpenseDetail);
+projectRouter.delete('/project/:id/expenseDetails/:expenseId', isAuth, deleteExpenseDetail);
 
 /**
  * @swagger
@@ -663,6 +730,8 @@ projectRouter.delete('/project/:id/expenseDetails/:expenseId', deleteExpenseDeta
  *   delete:
  *     summary: Delete employee detail from a project
  *     description: Delete an existing employee detail from the specified project.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -682,13 +751,16 @@ projectRouter.delete('/project/:id/expenseDetails/:expenseId', deleteExpenseDeta
  *       500:
  *         description: Internal server error
  */
-projectRouter.delete('/project/:id/employeeDetails/:employeeId', deleteEmployeeDetail);
+projectRouter.delete('/project/:id/employeeDetails/:employeeId', isAuth, deleteEmployeeDetail);
+
 /**
  * @swagger
  * /projects/update/{id}:
  *   put:
  *     summary: Update an existing project
  *     description: Update the details of an existing project by ID.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -777,6 +849,8 @@ projectRouter.put('/update/:id', isAuth, updateProject);
  *   delete:
  *     summary: Delete a project
  *     description: Delete a project by ID.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -800,6 +874,8 @@ projectRouter.delete('/delete/:id', isAuth, deleteProject);
  *   get:
  *     summary: Get project details by ID
  *     description: Retrieve the project details by project ID.
+ *     tags: 
+ *       - Projects
  *     parameters:
  *       - in: path
  *         name: id
@@ -894,6 +970,5 @@ projectRouter.delete('/delete/:id', isAuth, deleteProject);
  *         description: Internal server error
  */
 projectRouter.get('/getProjectById/:id', isAuth, getProjectById);
-
 
 export default projectRouter;

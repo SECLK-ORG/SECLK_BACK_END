@@ -6,10 +6,19 @@ const categoryRouter = Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Categories
+ *   description: API endpoints for managing categories
+ */
+
+/**
+ * @swagger
  * /categories/all:
  *   get:
  *     summary: Get all categories
  *     description: Retrieve a list of all categories.
+ *     tags: 
+ *       - Categories
  *     responses:
  *       200:
  *         description: A list of categories
@@ -35,6 +44,8 @@ categoryRouter.get('/all', isAuth, getAllCategories);
  *   post:
  *     summary: Create a new category
  *     description: Create a new category with the provided details.
+ *     tags: 
+ *       - Categories
  *     requestBody:
  *       required: true
  *       content:
@@ -72,6 +83,8 @@ categoryRouter.post('/create', isAuth, createCategory);
  *   put:
  *     summary: Update an existing category
  *     description: Update a category with the provided details.
+ *     tags: 
+ *       - Categories
  *     parameters:
  *       - in: path
  *         name: id
@@ -116,6 +129,8 @@ categoryRouter.put('/update/:id', isAuth, updateCategory);
  *   delete:
  *     summary: Delete a category
  *     description: Delete a category by ID.
+ *     tags: 
+ *       - Categories
  *     parameters:
  *       - in: path
  *         name: id

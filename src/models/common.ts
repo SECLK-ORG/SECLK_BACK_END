@@ -79,3 +79,18 @@ export interface Positions extends Document {
 
 positions: string;
 }
+
+
+export interface EmployeePayloadDto{
+  _id?:string
+  name?:string
+  email?:string
+  startDate?:string
+  contactNumber?:string
+  position?:string
+  status?:string
+  workLocation?:string
+  role?:string
+  password?:string
+  pwResetToken?:string|null
+  }

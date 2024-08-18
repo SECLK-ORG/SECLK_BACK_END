@@ -6,10 +6,19 @@ const positionRouter = Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Positions
+ *   description: API endpoints for managing positions
+ */
+
+/**
+ * @swagger
  * /positions/all:
  *   get:
  *     summary: Get all positions
  *     description: Retrieve a list of all positions.
+ *     tags: 
+ *       - Positions
  *     responses:
  *       200:
  *         description: A list of positions
@@ -35,6 +44,8 @@ positionRouter.get('/all', isAuth, getAllPositions);
  *   post:
  *     summary: Create a new position
  *     description: Create a new position with the provided details.
+ *     tags: 
+ *       - Positions
  *     requestBody:
  *       required: true
  *       content:
@@ -72,6 +83,8 @@ positionRouter.post('/create', isAuth, createPosition);
  *   put:
  *     summary: Update an existing position
  *     description: Update a position with the provided details.
+ *     tags: 
+ *       - Positions
  *     parameters:
  *       - in: path
  *         name: id
@@ -116,6 +129,8 @@ positionRouter.put('/update/:id', isAuth, updatePosition);
  *   delete:
  *     summary: Delete a position
  *     description: Delete a position by ID.
+ *     tags: 
+ *       - Positions
  *     parameters:
  *       - in: path
  *         name: id
