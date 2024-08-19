@@ -3,6 +3,7 @@ import userSchema from '../database/models/user';
 import logger from "../utils/logger";
 import { EmployeePayloadDto } from "../models/common";
 import { ConflictError } from "../models/errors";
+import position from "../database/models/position";
 
 export const createUser = async (userData: user) => {
     try {
@@ -109,3 +110,69 @@ export const deleteUserRepo = async (userId: string) => {
         throw new Error(error.message);
     }
 };
+
+export const findUserPayments = async (userId: string) => {
+    try {
+        logger.info(`Repository: Fetching payment details for user ID: ${userId}`);
+
+        const PaymentsData = await userSchema.findById(userId).select('paymentHistory') .populate({
+            path: 'paymentHistory.projectId',
+            model: 'Project' ,
+            select: 'projectName'
+        })
+        return PaymentsData;
+    } catch (error: any) {
+        logger.error(`Repository: Error fetching payments for user ID: ${userId} - ${error.message}`);
+        throw new Error(error.message);
+    }
+};
+
+
+export const findUserAssignedProjects = async (userId: string) => {
+  try {
+    logger.info(`Repository: Fetching assigned projects for user ID: ${userId}`);
+    
+    const user = await userSchema.findById(userId).populate({
+      path: 'assignedProjects',
+      model: 'Project',
+      select: '_id projectName  employees', // Select only the fields you need
+    });
+    
+    if (!user) {
+      logger.warn(`Repository: User with ID ${userId} not found`);
+      return null;
+    }
+    const projectsWithMatchingEmployee = user.assignedProjects.map((project: any) => {
+        const matchingEmployees = project.employees.filter((employee: any) => String(employee.employeeID._id) === userId);
+    return {
+        position:user.position,
+        _id: project._id,
+        projectName: project.projectName,
+        projectStartedDate: matchingEmployees.length > 0 ? matchingEmployees[0].projectStartedDate : null,
+      };
+    });
+    
+    return projectsWithMatchingEmployee.filter(project => project.projectStartedDate !== null);
+  } catch (error: any) {
+    logger.error(`Repository: Error fetching assigned projects for user ID: ${userId} - ${error.message}`);
+    throw new Error(error.message);
+  }
+};
+
+export const findUserById = async (userId: string) => {
+    try {
+      logger.info(`Repository: Fetching user with ID: ${userId}`);
+      
+      const user = await userSchema.findById(userId).select('-password -pwResetToken -paymentHistory -__v -assignedProjects'); // Exclude sensitive fields
+      
+      if (!user) {
+        logger.warn(`Repository: User with ID ${userId} not found`);
+        return null;
+      }
+  
+      return user;
+    } catch (error: any) {
+      logger.error(`Repository: Error fetching user with ID: ${userId} - ${error.message}`);
+      throw new Error(error.message);
+    }
+  };

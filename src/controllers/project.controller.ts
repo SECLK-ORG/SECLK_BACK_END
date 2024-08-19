@@ -4,6 +4,7 @@ import { createProjectService, getAllocatedProjectsByUserIdService, getAllProjec
 import { AppError, BadRequestError } from "../models/errors";
 import { createProjectDto, updateProjectDto } from "../models/project.model";
 import Jwt from "jsonwebtoken";
+import Roles from "../enums/roles";
 
 export const createProject = async (req: Request, res: Response) => {
     try {
@@ -28,11 +29,11 @@ export const getAllProjects = async (req: Request, res: Response) => {
         }
         const token = authHeader.split(' ')[1];
         const decodedToken: any = Jwt.decode(token);
-        if (decodedToken.role === 'admin') {
+        if (decodedToken.role === Roles.ADMIN) {
             const response = await getAllProjectsService();
             res.status(response.code).send(response);
         }
-        if (decodedToken.role === 'user') {
+        if (decodedToken.role === Roles.USER) {
             const response = await getAllocatedProjectsByUserIdService(decodedToken.userId);
             res.status(response.code).send(response);
         }

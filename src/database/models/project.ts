@@ -7,7 +7,7 @@ import logger from "../../utils/logger";
 const incomeSchema = new Schema<Income>({
     date: { type: Date, default: Date.now },
     amount: { type: Number, required: true },
-    invoiceNumber: { type: String },
+    invoiceNumber: { type: String ,required: true ,unique:true},
     receivedBy: { type: String },
     description: { type: String },
 });
@@ -30,7 +30,7 @@ const expenseSchema = new Schema<Expense>({
     description: { type: String },
     vendor: { type: String },
     category: { type: String, required: true },
-    invoiceNumber: { type: String },
+    invoiceNumber: { type: String,required: true ,unique:true },
     employeeID: {
         _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
         name: { type: String, required: false },
@@ -38,9 +38,6 @@ const expenseSchema = new Schema<Expense>({
     },
 });
 
-// interface ProjectWithTotalIncome extends Project {
-//     totalIncome: number;
-// }
 
 const projectSchema = new Schema<Project>({
     projectName: { type: String, required: true },

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { user } from '../models/user.model';
 import logger from '../utils/logger';
-import { addUserService, deleteUserService, forgotPasswordService, getAllUsersService, loginUserService, ResetPasswordService, searchUsersService } from '../services/user.services';
+import { addUserService, deleteUserService, forgotPasswordService, getAllUsersService, getUserAssignedProjectsService, getUserByIdService, getUserPaymentsService, loginUserService, ResetPasswordService, searchUsersService } from '../services/user.services';
 import { AppError, BadRequestError } from '../models/errors';
 import { EmployeePayloadDto } from '../models/common';
 import { updateUserService } from '../services/project.services';
@@ -62,7 +62,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
         const response: any = await loginUserService(email, password);
 
-        logger.info(`Controller: User logged in successfully, ID: ${response.data._id}`);
+        logger.info(`Controller: User logged in successfully, ID: ${response}`);
 
         res.status(response.code).send(response);
     } catch (error: any) {
@@ -197,3 +197,62 @@ export const deleteUser = async (req: Request, res: Response) => {
         }
     }
 };
+
+export const getUserPayments = async (req: Request, res: Response) => {
+    try {
+        const userId = req.params.userId;
+        logger.info(`Controller: Received request to fetch payment details for user ID: ${userId}`);
+
+        const payments = await getUserPaymentsService(userId);
+
+        res.status(200).send(payments);
+    } catch (error: any) {
+        if (error instanceof AppError) {
+            logger.error(`Controller: ${error.message}`);
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            logger.error("Controller: Internal Server Error", error);
+            res.status(500).send({ message: "Internal Server Error" });
+        }
+    }
+};
+
+export const getUserAssignedProjects = async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.userId;
+  
+      logger.info(`Controller: Received request to fetch assigned projects for user ID: ${userId}`);
+  
+      const projects = await getUserAssignedProjectsService(userId);
+  
+      res.status(200).send({ code: 200, data: projects, message: "Assigned projects fetched successfully" });
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        logger.error(`Controller: ${error.message}`);
+        res.status(error.statusCode).send({ message: error.message });
+      } else {
+        logger.error("Controller: Internal Server Error", error);
+        res.status(500).send({ message: "Internal Server Error" });
+      }
+    }
+  };
+
+  export const getUserById = async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.id;
+  
+      logger.info(`Controller: Received request to fetch user with ID: ${userId}`);
+  
+      const user = await getUserByIdService(userId);
+  
+      res.status(200).send({ code: 200, data: user, message: "User fetched successfully" });
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        logger.error(`Controller: ${error.message}`);
+        res.status(error.statusCode).send({ message: error.message });
+      } else {
+        logger.error("Controller: Internal Server Error", error);
+        res.status(500).send({ message: "Internal Server Error" });
+      }
+    }
+  };

@@ -10,7 +10,13 @@ const paymentSchema = new Schema<Payment>({
     amount: { type: Number, required: true },
     description: { type: String },
     invoiceNumber: { type: String },
-    date: { type: Date, default: Date.now }
+    date: { type: Date, default: Date.now },
+    employeeID: {
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User',  },
+      name: { type: String, required: false },
+      email: {type: String, required: false },
+  },
+    expenseId: { type: Schema.Types.ObjectId, ref: 'Expense' },
   });
   
   const userSchema = new Schema<User>({

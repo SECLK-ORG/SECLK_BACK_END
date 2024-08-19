@@ -2,6 +2,7 @@ import mongoose, { Document } from 'mongoose';
 import Status from '../enums/status';
 import Roles from '../enums/roles';
 export interface Expense {
+    _id?:string;
     category: string;
     date: Date;
     amount: number;
@@ -49,6 +50,9 @@ export interface Project extends Document {
 }
 
 export interface Payment {
+  _id?:string;
+  expenseId: mongoose.Types.ObjectId;
+  employeeID?: UserData;
   projectId: mongoose.Types.ObjectId;
   category: string;
   amount: number;

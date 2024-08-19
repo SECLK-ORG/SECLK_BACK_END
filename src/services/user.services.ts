@@ -1,5 +1,5 @@
 import { user } from "../models/user.model";
-import { findUserByEmail, createUser, getAllUsers, updateUserId, searchUsersRepo, deleteUserRepo } from "../repository/user.repository";
+import { findUserByEmail, createUser, getAllUsers, updateUserId, searchUsersRepo, deleteUserRepo, findUserPayments, findUserAssignedProjects, findUserById } from "../repository/user.repository";
 import logger from "../utils/logger";
 import { responseFormate } from "../models/response";
 import bcrypt from 'bcrypt';
@@ -193,3 +193,55 @@ export const deleteUserService = async (userId: string) => {
         throw new AppError(error, 400);
     }
 }
+
+export const getUserPaymentsService = async (userId: string) => {
+    try {
+        logger.info(`Service: Fetching payment details for user ID: ${userId}`);
+        
+        const PaymentsData = await findUserPayments(userId);
+
+        if (!PaymentsData) {
+            logger.warn(`Service: PaymentsData with ID: ${userId} not found`);
+            throw new NotFoundError('User not found');
+        }
+        logger.info(`Service: Payments fetched successfully PaymentsData : ${PaymentsData}`);
+
+    
+
+        return PaymentsData;
+    } catch (error: any) {
+        logger.error(`Service: Error fetching payments for user ID: ${userId} - ${error.message}`);
+        throw new Error(error.message);
+    }
+};
+
+
+
+export const getUserAssignedProjectsService = async (userId: string) => {
+  logger.info(`Service: Fetching assigned projects for user ID: ${userId}`);
+  
+  const assignedProjects = await findUserAssignedProjects(userId);
+  
+  if (!assignedProjects) {
+    logger.warn(`Service: No assigned projects found for user ID: ${userId}`);
+    throw new NotFoundError('User not found or no assigned projects');
+  }
+  
+  return assignedProjects;
+};
+export const getUserByIdService = async (userId: string) => {
+    logger.info(`Service: Fetching user by ID: ${userId}`);
+    try {
+        const user = await findUserById(userId);
+    
+        if (!user) {
+          logger.warn(`Service: User with ID ${userId} not found`);
+          throw new NotFoundError('User not found');
+        }
+        
+        return user;
+    } catch (error:any) {
+        throw new AppError(error, 400);
+    }
+   
+  };

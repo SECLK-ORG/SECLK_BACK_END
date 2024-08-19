@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AddUser, deleteUser, forgotPassword, GetallUser, loginUser, resetPassWord, searchUsers, updateUser } from "../controllers/user.controller";
+import { AddUser, deleteUser, forgotPassword, GetallUser, getUserAssignedProjects, getUserById, getUserPayments, loginUser, resetPassWord, searchUsers, updateUser } from "../controllers/user.controller";
 import { addUserValidation } from "../middleware/user.Validation";
 import { isAuth } from "../middleware/isAuth";
 
@@ -306,4 +306,77 @@ userRouter.put("/:id", isAuth, updateUser);
  *         description: Internal server error
  */
 userRouter.delete("/:id", isAuth, deleteUser);
+
+
+/**
+ * @swagger
+ * /users/{userId}/paymentHistory:
+ *   get:
+ *     summary: Get payment details for a user
+ *      tags: 
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the user
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved payment details
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.get('/:userId/paymentHistory',isAuth, getUserPayments);
+
+/**
+ * @swagger
+ * /users/{userId}/assignedProjects:
+ *   get:
+ *     summary: Get assigned projects for a user
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the user
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved assigned projects
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.get('/:userId/assignedProjects',isAuth, getUserAssignedProjects);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Get user by ID
+ *     tags: 
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User details fetched successfully
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+userRouter.get('/:id', getUserById);
 export default userRouter;

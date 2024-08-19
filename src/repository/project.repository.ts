@@ -5,10 +5,11 @@ import { createProjectDto, updateProjectDto } from '../models/project.model';
 import logger from '../utils/logger';
 import { Income, Expense } from '../models/common';
 import { ConflictError } from '../models/errors';
-
+import userSchema from '../database/models/user';
 export const getAllProjectsRepo = async () => {
     try {
-        const projects = await projectSchema.find();
+        logger.info("getAll projects")
+        const projects = await projectSchema.find()
         return projects;
     } catch (error: any) {
         throw new Error(error.message);
@@ -170,21 +171,40 @@ export const addExpenseDetailToProjectRepo = async (projectId: string, expenseDe
     try {
         logger.info(`Adding expense detail to project with id: ${projectId}, expense detail: ${JSON.stringify(expenseDetail)}`);
 
-         // Generate a unique invoice number if not provided
-         if (!expenseDetail.invoiceNumber) {
+        // Generate a unique invoice number if not provided
+        if (!expenseDetail.invoiceNumber) {
             expenseDetail.invoiceNumber = await generateUniqueInvoiceNumber();
         }
 
-        const project = await projectSchema.findByIdAndUpdate(
+        // Add the expense detail to the project and return the updated project
+        const updatedProject = await projectSchema.findByIdAndUpdate(
             projectId,
             { $push: { expenseDetails: expenseDetail } },
             { new: true }
+        ).select('expenseDetails').lean();
+
+        if (!updatedProject) {
+            throw new Error('Project not found');
+        }
+
+        // Find the newly added expense by comparing the invoice number (or another unique field)
+        const addedExpense:any = updatedProject.expenseDetails.find(
+            (expense: any) => expense.invoiceNumber === expenseDetail.invoiceNumber
         );
+
+        if (!addedExpense) {
+            throw new Error('Failed to find the added expense detail.');
+        }
+
+        // If employeeID is available, update the userPaymentHistory with the created expense _id
+        if (expenseDetail.employeeID) {
+            await updateUserPaymentHistory(expenseDetail.employeeID._id, projectId,expenseDetail,addedExpense._id);
+        }
 
         await recalculateProjectTotals(projectId);
 
         logger.info(`addExpenseDetailToProjectRepo: Added expense detail: ${JSON.stringify(expenseDetail)}`);
-        return project;
+        return updatedProject;
     } catch (error: any) {
         logger.error(`Error adding expense detail: ${error.message}`);
         throw new Error(error.message);
@@ -252,26 +272,51 @@ export const updateIncomeDetailInProjectRepo = async (projectId: string, incomeI
     }
 };
 
+
 export const updateExpenseDetailInProjectRepo = async (projectId: string, expenseId: string, updatedExpenseDetail: any) => {
     try {
         logger.info(`Updating expense detail with id: ${expenseId} in project with id: ${projectId}`);
 
+        // Find the project and the specific expense detail
+        const project = await projectSchema.findOne({ _id: projectId });
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        const oldExpenseDetail = project.expenseDetails.find((expense: any) => expense._id.toString() === expenseId);
+        if (!oldExpenseDetail) {
+            throw new Error('Expense detail not found');
+        }
+
+        const oldEmployeeId = oldExpenseDetail.employeeID ? oldExpenseDetail.employeeID._id.toString() : null;
+
         // Construct the $set object to only update the fields provided
-        const setFields:any = {};
+        const setFields: any = {};
         for (const [key, value] of Object.entries(updatedExpenseDetail)) {
             setFields[`expenseDetails.$.${key}`] = value;
         }
 
-        const project = await projectSchema.findOneAndUpdate(
+        const updatedProject = await projectSchema.findOneAndUpdate(
             { _id: projectId, "expenseDetails._id": expenseId },
             { $set: setFields },
             { new: true }
         );
 
+        // Handle user payment history
+        if (oldEmployeeId) {
+            // Remove the old payment history entry from the old user
+            await removePaymentFromUserHistory(oldEmployeeId, expenseId);
+        }
+        logger.info(` updatedExpenseDetail ${updatedExpenseDetail}`)
+        if (updatedExpenseDetail.employeeID) {
+            // Add the new payment history entry or update it for the same user
+            await updateUserPaymentHistory(updatedExpenseDetail.employeeID._id, projectId, updatedExpenseDetail,expenseId);
+        }
+
         await recalculateProjectTotals(projectId);
 
         logger.info(`updateExpenseDetailInProjectRepo: Updated expense detail with fields: ${JSON.stringify(updatedExpenseDetail)}`);
-        return project;
+        return updatedProject;
     } catch (error: any) {
         logger.error(`Error updating expense detail: ${error.message}`);
         throw new Error(error.message);
@@ -319,7 +364,25 @@ export const removeIncomeDetailFromProjectRepo = async (projectId: string, incom
 export const removeExpenseDetailFromProjectRepo = async (projectId: string, expenseId: string) => {
     try {
         logger.info(`Removing expense detail with id: ${expenseId} from project with id: ${projectId}`);
-        const project = await projectSchema.findByIdAndUpdate(
+
+        // Find the project and the specific expense detail
+        const project = await projectSchema.findById(projectId);
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        const expenseDetail = project.expenseDetails.find((expense:any) => expense._id.toString() === expenseId);
+        if (!expenseDetail) {
+            throw new Error('Expense detail not found');
+        }
+
+        // Handle user payment history if employeeID is present
+        if (expenseDetail.employeeID) {
+            await removePaymentFromUserHistory(expenseDetail.employeeID._id, expenseId);
+        }
+
+        // Remove the expense detail from the project
+        await projectSchema.findByIdAndUpdate(
             projectId,
             { $pull: { expenseDetails: { _id: expenseId } } },
             { new: true }
@@ -360,7 +423,7 @@ const generateUniqueInvoiceNumber = async (): Promise<string> => {
 
     try {
         while (!isUnique) {
-            invoiceNumber = Math.floor(100000000 + Math.random() * 900000000).toString(); // 9-digit random number
+            invoiceNumber = Math.floor(100000000000000 + Math.random() * 900000000000000).toString();// 9-digit random number
 
             const existingIncome = await projectSchema.findOne({ "incomeDetails.invoiceNumber": invoiceNumber });
             const existingExpense = await projectSchema.findOne({ "expenseDetails.invoiceNumber": invoiceNumber });
@@ -452,3 +515,73 @@ export const getProjectFinancialSummaryRepo = async (projectId: string) => {
         throw new Error(error.message);
     }
 };
+
+
+const updateUserPaymentHistory = async (userId: string, projectId: string, expenseDetail: any,expenseId:string) => {
+    try {
+        logger.info(`Updating payment history for user with id: ${userId},expenseDetail:${JSON.stringify(expenseDetail)}`);
+
+        const paymentData = {
+            amount: expenseDetail.amount,
+            vendor: expenseDetail.vendor,
+            date: expenseDetail.date,
+            description: expenseDetail.description,
+            category: expenseDetail.category,
+            employeeID: expenseDetail.employeeID,
+            invoiceNumber: expenseDetail.invoiceNumber,
+            projectId: projectId,
+            expenseId:expenseId
+        };
+
+        await userSchema.findByIdAndUpdate(
+            userId,
+            { $push: { paymentHistory: paymentData } },
+            { new: true }
+        );
+
+        logger.info(`updateUserPaymentHistory: Payment history updated for user id: ${userId}`);
+    } catch (error: any) {
+        logger.error(`Error updating payment history: ${error.message}`);
+        throw new Error(error.message);
+    }
+};
+
+
+const removePaymentFromUserHistory = async (userId: string, expenseId: string) => {
+    try {
+        logger.info(`Removing payment history entry for user with id: ${userId} and expense id: ${expenseId}`);
+
+        await userSchema.findByIdAndUpdate(
+            userId,
+            { $pull: { paymentHistory: { expenseId: expenseId } } },
+            { new: true }
+        );
+
+        logger.info(`removePaymentFromUserHistory: Removed payment history entry for expense id: ${expenseId}`);
+    } catch (error: any) {
+        logger.error(`Error removing payment history entry: ${error.message}`);
+        throw new Error(error.message);
+    }
+};
+
+const updatePaymentInUserHistory = async (userId: string, expenseId: string, updatedExpenseDetail: any) => {
+    try {
+        logger.info(`Updating payment history for user with id: ${userId} and expense id: ${expenseId}`);
+
+        const setFields: any = {};
+        for (const [key, value] of Object.entries(updatedExpenseDetail)) {
+            setFields[`paymentHistory.$.${key}`] = value;
+        }
+
+        await userSchema.findOneAndUpdate(
+            { _id: userId, "paymentHistory._id": expenseId },
+            { $set: setFields },
+            { new: true }
+        );
+
+        logger.info(`updatePaymentInUserHistory: Updated payment history for user id: ${userId}`);
+    } catch (error: any) {
+        logger.error(`Error updating payment history: ${error.message}`);
+        throw new Error(error.message);
+    }
+}
