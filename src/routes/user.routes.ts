@@ -378,5 +378,5 @@ userRouter.get('/:userId/assignedProjects',isAuth, getUserAssignedProjects);
  *       500:
  *         description: Internal server error
  */
-userRouter.get('/:id', getUserById);
+userRouter.get('/:id',isAuth, getUserById);
 export default userRouter;
