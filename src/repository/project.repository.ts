@@ -16,6 +16,15 @@ export const getAllProjectsRepo = async () => {
     }
 };
 
+export const getProjectsListRepo = async () => {
+    try {
+        const projects = await projectSchema.find().select('projectName');
+        return projects;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
 export const createProjectRepo = async (projectData: createProjectDto) => {
     try {
         const project = await projectSchema.create(projectData);

@@ -18,7 +18,8 @@ import {
   updateEmployeeDetail,
   updateExpenseDetail,
   updateIncomeDetail,
-  getProjectFinancialSummary
+  getProjectFinancialSummary,
+  getProjectList
 } from '../controllers/project.controller';
 import { isAuth } from "../middleware/isAuth";
 
@@ -64,7 +65,39 @@ const projectRouter = Router();
  *                     example: "2021-06-13T18:25:43.511Z"
  */
 projectRouter.get('/all', isAuth, getAllProjects);
-
+/**
+ * @swagger
+ * /projects/getProjectList:
+ *   get:
+ *     summary: Get all projectsLis
+ *     description: Retrieve a list of all projects.
+ *     tags: 
+ *       - Projects
+ *     responses:
+ *       200:
+ *         description: A list of projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "60c72b2f4f1a2c001c8e4f34"
+ *                   name:
+ *                     type: string
+ *                     example: "Project Name"
+ *                   description:
+ *                     type: string
+ *                     example: "Project Description"
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2021-06-13T18:25:43.511Z"
+ */
+projectRouter.get('/getProjectList', getProjectList);
 /**
  * @swagger
  * /projects/create:
@@ -971,4 +1004,5 @@ projectRouter.delete('/delete/:id', isAuth, deleteProject);
  */
 projectRouter.get('/getProjectById/:id', isAuth, getProjectById);
 
+projectRouter.get('/getProjectList/', isAuth, getProjectById);
 export default projectRouter;

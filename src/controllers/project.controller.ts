@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import logger from "../utils/logger";
-import { createProjectService, getAllocatedProjectsByUserIdService, getAllProjectsService, getProjectStatusCountService, updateProjectService, deleteProjectService, getProjectByIdService, getIncomeDetailsByProjectId, getExpenseDetailsByProjectId, getEmployeeDetailsByProjectId, addEmployeeDetailToProject, addExpenseDetailToProject, addIncomeDetailToProject, removeEmployeeDetailFromProject, removeExpenseDetailFromProject, removeIncomeDetailFromProject, updateEmployeeDetailInProject, updateExpenseDetailInProject, updateIncomeDetailInProject, getProjectFinancialSummaryService } from "../services/project.services";
+import { createProjectService, getAllocatedProjectsByUserIdService, getAllProjectsService, getProjectStatusCountService, updateProjectService, deleteProjectService, getProjectByIdService, getIncomeDetailsByProjectId, getExpenseDetailsByProjectId, getEmployeeDetailsByProjectId, addEmployeeDetailToProject, addExpenseDetailToProject, addIncomeDetailToProject, removeEmployeeDetailFromProject, removeExpenseDetailFromProject, removeIncomeDetailFromProject, updateEmployeeDetailInProject, updateExpenseDetailInProject, updateIncomeDetailInProject, getProjectFinancialSummaryService, getProjectListService } from "../services/project.services";
 import { AppError, BadRequestError } from "../models/errors";
 import { createProjectDto, updateProjectDto } from "../models/project.model";
 import Jwt from "jsonwebtoken";
@@ -290,5 +290,18 @@ export const getProjectFinancialSummary = async (req: Request, res: Response) =>
     } catch (error: any) {
         logger.error(`Error in getProjectFinancialSummary: ${error.message}`);
         res.status(500).send({ message: 'Internal Server Error' });
+    }
+}
+
+export const getProjectList =async(req:Request,res:Response)=>{
+    try {
+        const response= await getProjectListService();
+        res.status(response.code).send(response);
+    } catch (error:any) {
+        if (error instanceof AppError) {
+            res.status(error.statusCode).send({ message: error.message });
+        } else {
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
     }
 }

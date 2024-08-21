@@ -2,7 +2,7 @@ import { EmployeePayloadDto } from "../models/common";
 import { AppError, BadRequestError, NotFoundError } from "../models/errors";
 import { createProjectDto, updateProjectDto } from "../models/project.model";
 import { responseFormate } from "../models/response";
-import { createProjectRepo, getAllocatedProjectsByUserIdServiceRepo, getAllProjectsRepo, getProjectStatusCountRepo, updateProjectRepo, deleteProjectRepo, getProjectByIdRepo, getIncomeDetailsBYProjectIdRepo, getEmployeeDetailsBYProjectIdRepo, getExpenseDetailsBYProjectIdRepo, addIncomeDetailToProjectRepo, addEmployeeDetailToProjectRepo, addExpenseDetailToProjectRepo, removeEmployeeDetailFromProjectRepo, removeExpenseDetailFromProjectRepo, removeIncomeDetailFromProjectRepo, updateEmployeeDetailInProjectRepo, updateExpenseDetailInProjectRepo, updateIncomeDetailInProjectRepo, getProjectFinancialSummaryRepo } from "../repository/project.repository";
+import { createProjectRepo, getAllocatedProjectsByUserIdServiceRepo, getAllProjectsRepo, getProjectStatusCountRepo, updateProjectRepo, deleteProjectRepo, getProjectByIdRepo, getIncomeDetailsBYProjectIdRepo, getEmployeeDetailsBYProjectIdRepo, getExpenseDetailsBYProjectIdRepo, addIncomeDetailToProjectRepo, addEmployeeDetailToProjectRepo, addExpenseDetailToProjectRepo, removeEmployeeDetailFromProjectRepo, removeExpenseDetailFromProjectRepo, removeIncomeDetailFromProjectRepo, updateEmployeeDetailInProjectRepo, updateExpenseDetailInProjectRepo, updateIncomeDetailInProjectRepo, getProjectFinancialSummaryRepo, getProjectsListRepo } from "../repository/project.repository";
 import { updateUserId } from "../repository/user.repository";
 import logger from "../utils/logger";
 
@@ -339,3 +339,19 @@ export const updateUserService = async (userId: string, userData: EmployeePayloa
         throw new AppError(error.message, 400);
     }
 };
+
+
+export const  getProjectListService = async () => {
+    try {
+        const projects = await getProjectsListRepo();
+        const response: responseFormate = {
+            code: 200,
+            data: projects,
+            message: "Projects Fetched"
+        };
+
+        return response;
+    } catch (error: any) {
+        throw new AppError(error,400);
+    }
+}
