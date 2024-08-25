@@ -283,6 +283,7 @@ userRouter.post("/forgotPassword", forgotPassword);
  *         description: Internal server error
  */
 userRouter.put("/:id", isAuth, updateUser);
+
 /**
  * @swagger
  * /users/{id}:
@@ -307,13 +308,12 @@ userRouter.put("/:id", isAuth, updateUser);
  */
 userRouter.delete("/:id", isAuth, deleteUser);
 
-
 /**
  * @swagger
  * /users/{userId}/paymentHistory:
  *   get:
  *     summary: Get payment details for a user
- *      tags: 
+ *     tags: 
  *       - Users
  *     parameters:
  *       - in: path
@@ -330,7 +330,7 @@ userRouter.delete("/:id", isAuth, deleteUser);
  *       500:
  *         description: Internal server error
  */
-userRouter.get('/:userId/paymentHistory',isAuth, getUserPayments);
+userRouter.get('/:userId/paymentHistory', isAuth, getUserPayments);
 
 /**
  * @swagger
@@ -354,7 +354,7 @@ userRouter.get('/:userId/paymentHistory',isAuth, getUserPayments);
  *       500:
  *         description: Internal server error
  */
-userRouter.get('/:userId/assignedProjects',isAuth, getUserAssignedProjects);
+userRouter.get('/:userId/assignedProjects', isAuth, getUserAssignedProjects);
 
 /**
  * @swagger
@@ -378,5 +378,6 @@ userRouter.get('/:userId/assignedProjects',isAuth, getUserAssignedProjects);
  *       500:
  *         description: Internal server error
  */
-userRouter.get('/:id',isAuth, getUserById);
+userRouter.get('/:id', isAuth, getUserById);
+
 export default userRouter;
