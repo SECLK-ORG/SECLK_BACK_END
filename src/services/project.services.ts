@@ -5,6 +5,7 @@ import { responseFormate } from "../models/response";
 import { createProjectRepo, getAllocatedProjectsByUserIdServiceRepo, getAllProjectsRepo, getProjectStatusCountRepo, updateProjectRepo, deleteProjectRepo, getProjectByIdRepo, getIncomeDetailsBYProjectIdRepo, getEmployeeDetailsBYProjectIdRepo, getExpenseDetailsBYProjectIdRepo, addIncomeDetailToProjectRepo, addEmployeeDetailToProjectRepo, addExpenseDetailToProjectRepo, removeEmployeeDetailFromProjectRepo, removeExpenseDetailFromProjectRepo, removeIncomeDetailFromProjectRepo, updateEmployeeDetailInProjectRepo, updateExpenseDetailInProjectRepo, updateIncomeDetailInProjectRepo, getProjectFinancialSummaryRepo, getProjectsListRepo } from "../repository/project.repository";
 import { updateUserId } from "../repository/user.repository";
 import logger from "../utils/logger";
+import { sendProjectAssignmentEmail } from "./email.services";
 
 export const getAllProjectsService = async () => {
     try {
@@ -189,14 +190,28 @@ export const addExpenseDetailToProject = async (projectId: string, expenseDetail
 
 export const addEmployeeDetailToProject = async (projectId: string, employeeDetail: any) => {
     try {
+        logger.info(`Starting to add employee detail to project with ID: ${projectId}`);
+        
         const project = await addEmployeeDetailToProjectRepo(projectId, employeeDetail);
+        logger.info(`Employee detail added to project. Project ID: ${projectId}, Employee ID: ${employeeDetail.employeeID._id}`);
+
+        // Send assignment email
+        logger.info(`Sending assignment email to employee. Email: ${employeeDetail.employeeID.email}`);
+        await sendProjectAssignmentEmail(
+            employeeDetail.employeeID.email, 
+            project, 
+            employeeDetail.employeeID.name
+        );
+        logger.info(`Assignment email sent successfully to ${employeeDetail.employeeID.email}`);
+
         return {
             code: 200,
             data: project,
             message: "Employee detail added successfully"
         };
     } catch (error: any) {  
-        throw new AppError(error,400);
+        logger.error(`Error in addEmployeeDetailToProject: ${error.message}`);
+        throw new AppError(error, 400);
     }
 };
 

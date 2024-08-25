@@ -39,3 +39,36 @@ export const sendEmail = async (receiver: string, subject: string, resetToken: s
         logger.error('Error sending email:', error);
     }
 };
+
+export const sendProjectAssignmentEmail = async (receiver: string, projectDetails: any, name: string) => {
+    try {
+        const templatePath = path.resolve(__dirname, '..', 'templates', 'assignedProject.ejs');
+        const data = await ejs.renderFile(templatePath, {
+            name,
+            projectName: projectDetails.projectName,
+            startDate: projectDetails.startDate.toDateString(),
+            endDate: projectDetails.endDate ? projectDetails.endDate.toDateString() : 'N/A',
+            status: projectDetails.status,
+            category: projectDetails.category,
+        });
+
+        const mailOptions = {
+            from: 'avishkachanaka@gmail.com',
+            to: receiver,
+            subject: `Assigned to Project: ${projectDetails.projectName}`,
+            html: data,
+            attachments: [
+                {
+                    filename: 'logo.png',
+                    path: path.resolve(__dirname, '..', 'public', 'images', 'logo.png'),
+                    cid: 'logo'
+                }
+            ]
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        logger.info('Assignment email sent: %s', info.messageId);
+    } catch (error) {
+        logger.error('Error sending assignment email:', error);
+    }
+};

@@ -1,0 +1,28 @@
+<%- include('./includes/header.ejs') %>
+
+<div style="margin: 0 auto; padding: 30px 0; font-family: Arial;">
+  <h3 style="color: #003A75;">Hello, <%= name %></h3>
+  <p style="color: #555; line-height: 1.6; margin-bottom: 2px;">
+    You have been assigned to a new project: <strong><%= projectName %></strong>.
+  </p>
+  <p style="color: #555; line-height: 1.6;">
+    Here are the details of the project:
+  </p>
+  <ul style="color: #555; line-height: 1.6; list-style-type: none; padding-left: 0;">
+    <li><strong>Project Name:</strong> <%= projectName %></li>
+    <li><strong>Start Date:</strong> <%= startDate %></li>
+    <li><strong>End Date:</strong> <%= endDate %></li>
+    <li><strong>Status:</strong> <%= status %></li>
+    <li><strong>Category:</strong> <%= category %></li>
+  </ul>
+
+  <p style="color: #555; line-height: 1.6; margin-top: 20px;">
+    Please reach out if you have any questions.
+  </p>
+
+  <p style="color: #003A75; font-weight: bold;">Best Regards,</p>
+  <img src="cid:logo" alt="Logo" style="max-width: 150px; margin-bottom: 2px;">
+  <p style="color: #003A75; font-size: 14px;">mobile: 0715525547 | email: avishkachana@gmail.com</p>
+</div>
+
+<%- include('./includes/footer.ejs') %>
