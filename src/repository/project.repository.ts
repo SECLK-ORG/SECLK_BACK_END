@@ -66,9 +66,11 @@ export const getProjectStatusCountRepo = async () => {
 };
 
 export const getAllocatedProjectsByUserIdServiceRepo = async (userId: string) => {
+
     try {
+        const ObjectUserId = new mongoose.Types.ObjectId(userId);
         const projects = await projectSchema.find({
-            employees: userId
+            'employees.employeeID._id': ObjectUserId
         });
         logger.info(`Fetched projects: ${JSON.stringify(projects)}`);
 
