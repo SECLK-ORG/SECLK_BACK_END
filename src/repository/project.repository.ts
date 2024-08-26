@@ -224,18 +224,22 @@ export const addExpenseDetailToProjectRepo = async (projectId: string, expenseDe
 
 export const addEmployeeDetailToProjectRepo = async (projectId: string, employeeDetail: any) => {
     try {
-        // logger.info(`Adding employee detail to project with id: ${projectId} and employee detail: ${JSON.stringify(employeeDetail)}`);
-
         // Fetch the project to check if the employee already exists
         const project = await projectSchema.findById(projectId).select('employees');
         if (!project) {
             throw new Error("Project not found");
         }
-        logger.info(`employeeDetail.employeeID._id: ${employeeDetail.employeeID._id},project:${project}`);
+        
+        // Log employee details for debugging
+        logger.info(`employeeDetail.employeeID._id: ${employeeDetail.employeeID._id}, project: ${project}`);
 
-        // Check if the employee already exists in the project's employees array by comparing employeeID
-        const employeeExists = project.employees.some((employee: any) => employee.employeeID._id.toString() === employeeDetail.employeeID._id);
+        // Check if the employee already exists in the project's employees array
+        const employeeExists = project.employees.some((employee: any) => 
+            employee.employeeID._id.toString() === employeeDetail.employeeID._id.toString()
+        );
+
         logger.info(`employeeExists: ${employeeExists}`);
+        
         if (employeeExists) {
             throw new ConflictError("This employee is already added to the project");
         }
@@ -249,7 +253,6 @@ export const addEmployeeDetailToProjectRepo = async (projectId: string, employee
 
         await recalculateProjectTotals(projectId);
 
-        // logger.info(`addEmployeeDetailToProjectRepo: Added employee detail: ${JSON.stringify(employeeDetail)}`);
         return updatedProject;
     } catch (error: any) {
         logger.error(`Error adding employee detail: ${error.message}`);
