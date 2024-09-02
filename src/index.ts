@@ -9,6 +9,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import categoryRouter from './routes/category.routes';
 import positionRouter from './routes/position.routes';
+import { BACKEND_URL } from './configs/config';
 
 
 
@@ -29,8 +30,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.listen(PORT, () => {
   connect();
-  logger.info(`Server is running on http://localhost:${PORT}`);
-  logger.info(`Swagger docs are available at http://localhost:${PORT}/api-docs`);
+  logger.info(`Server is running on ${BACKEND_URL}`);
+  logger.info(`Swagger docs are available at ${BACKEND_URL}api-docs`);
  
 });
 
