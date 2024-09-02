@@ -3,8 +3,8 @@ export const mailConfig = {
     port: 587,
     debug: false,
     auth: {
-      user: "seconsultantslk@gmail.com",
-      pass: "czkk qsds vzoh tmvw",
+      user: process.env.EMAIL||"seconsultantslk@gmail.com",
+      pass: process.env.PASSWORD||"czkk qsds vzoh tmvw",
     },
    
   };
