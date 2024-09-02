@@ -31,7 +31,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.listen(PORT, () => {
   connect();
   logger.info(`Server is running on ${BACKEND_URL}`);
-  logger.info(`Swagger docs are available at ${BACKEND_URL}/api-docs`);
+  logger.info(`Swagger docs are available at ${BACKEND_URL}api-docs`);
  
 });
 
