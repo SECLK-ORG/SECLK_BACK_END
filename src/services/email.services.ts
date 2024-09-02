@@ -2,16 +2,17 @@ import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import path from 'path';
 import logger from '../utils/logger';
+import { mailConfig } from '../configs/mailConfig';
 
-const mailConfig = {
-    service: 'gmail',
+const MailConfig = {
+    service: mailConfig.host,
     auth: {
-        user: 'avishkachanaka@gmail.com',
-        pass: 'qfgg lrhe cvoc mksv'
+        user: mailConfig.auth.user,
+        pass: mailConfig.auth.pass
     }
 };
 
-const transporter = nodemailer.createTransport(mailConfig);
+const transporter = nodemailer.createTransport(MailConfig);
 
 export const sendEmail = async (receiver: string, subject: string, resetToken: string,name:string,template:string) => {
     try {
@@ -20,7 +21,7 @@ export const sendEmail = async (receiver: string, subject: string, resetToken: s
         const data = await ejs.renderFile(templatePath, { name,url:`http://localhost:3000/login/${resetToken}` });
 
         const mailOptions = {
-            from: 'avishkachanaka@gmail.com',
+            from:MailConfig.auth.user,
             to: receiver,
             subject: subject,
             html: data,
@@ -53,7 +54,7 @@ export const sendProjectAssignmentEmail = async (receiver: string, projectDetail
         });
 
         const mailOptions = {
-            from: 'avishkachanaka@gmail.com',
+            from: MailConfig.auth.user,
             to: receiver,
             subject: `Assigned to Project: ${projectDetails.projectName}`,
             html: data,

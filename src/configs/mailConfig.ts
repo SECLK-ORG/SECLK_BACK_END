@@ -3,10 +3,9 @@ export const mailConfig = {
     port: 587,
     debug: false,
     auth: {
-      user: "avishkachanaka@gmail.com",
-      pass: "Avishka.1999",
+      user: "seconsultantslk@gmail.com",
+      pass: "czkk qsds vzoh tmvw",
     },
-    to: "avishkachanaka@gmail.com",
-
+   
   };
   
