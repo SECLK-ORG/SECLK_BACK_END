@@ -4,10 +4,10 @@ import { DB_CONNECTION_STRING } from "../configs/config";
 import 'dotenv/config';
 
 let db: typeof mongoose;
-
+// console.log("DB_CONNECTION_STRING",DB_CONNECTION_STRING)
   export const connect= async () => {
     const MONGODB_URL = DB_CONNECTION_STRING || '';
-    logger.info('Connecting to database ....');
+    logger.info('Connecting to database ....',MONGODB_URL);
     if (db) {
         return;
     }
@@ -17,6 +17,6 @@ let db: typeof mongoose;
         logger.info('Database connected !');
     }).catch((error) => {
 
-        logger.error('Error connecting to database: ', error);
+        logger.error('Error connecting to database: ', error.message);
     });
 }
