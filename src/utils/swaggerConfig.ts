@@ -11,7 +11,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `${BACKEND_URL}/api`, // Change to your server URL
+      url: `${BACKEND_URL}api`, // Change to your server URL
       description: 'Development server',
     },
   ],
