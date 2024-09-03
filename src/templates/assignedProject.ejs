@@ -1,28 +1,27 @@
 <%- include('./includes/header.ejs') %>
 
-<div style="margin: 0 auto; padding: 30px 0; font-family: Arial;">
-  <h3 style="color: #003A75;">Hello, <%= name %></h3>
-  <p style="color: #555; line-height: 1.6; margin-bottom: 2px;">
-    You have been assigned to a new project: <strong><%= projectName %></strong>.
+<div style="margin: 0 auto; padding: 30px; font-family: Arial, sans-serif;  border: 1px solid #ddd;  background-color: #f9f9f9;">
+  <h3 style="color: #003A75; font-size: 22px; margin-bottom: 20px;">Hello, <%= name %></h3>
+  <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
+    You have been assigned to a new project: <strong style="color: #003A75;"><%= projectName %></strong>.
   </p>
-  <p style="color: #555; line-height: 1.6;">
+  <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
     Here are the details of the project:
   </p>
-  <ul style="color: #555; line-height: 1.6; list-style-type: none; padding-left: 0;">
-    <li><strong>Project Name:</strong> <%= projectName %></li>
-    <li><strong>Start Date:</strong> <%= startDate %></li>
-    <li><strong>End Date:</strong> <%= endDate %></li>
-    <li><strong>Status:</strong> <%= status %></li>
-    <li><strong>Category:</strong> <%= category %></li>
+  <ul style="color: #555; line-height: 1.6; list-style-type: none; padding-left: 0; margin-bottom: 20px;">
+    <li style="padding: 8px 0;"><strong style="color: #003A75;">Project Name:</strong> <%= projectName %></li>
+    <li style="padding: 8px 0;"><strong style="color: #003A75;">Start Date:</strong> <%= startDate %></li>
+    <li style="padding: 8px 0;"><strong style="color: #003A75;">End Date:</strong> <%= endDate %></li>
+    <li style="padding: 8px 0;"><strong style="color: #003A75;">Status:</strong> <%= status %></li>
+    <li style="padding: 8px 0;"><strong style="color: #003A75;">Category:</strong> <%= category %></li>
   </ul>
 
-  <p style="color: #555; line-height: 1.6; margin-top: 20px;">
-    Please reach out if you have any questions.
+  <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
+    Please feel free to reach out if you have any questions or need further information.
   </p>
 
-  <p style="color: #003A75; font-weight: bold;">Best Regards,</p>
+  <p style="color: #003A75; font-weight: bold; margin-bottom: 10px;">Best Regards,</p>
   <img src="cid:logo" alt="Logo" style="max-width: 150px; margin-bottom: 2px;">
-  <p style="color: #003A75; font-size: 14px;">mobile: +94711967228 | email: seconsultantslk@gmail.com</p>
 </div>
 
 <%- include('./includes/footer.ejs') %>

@@ -14,7 +14,7 @@ const incomeSchema = new Schema<Income>({
 
 const employeeSchema = new Schema({
     employeeID: {
-        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true,unique:true },
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
         name: { type: String, required: false },
         email: {type: String, required: false },
     },
