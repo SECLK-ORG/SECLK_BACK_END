@@ -235,7 +235,7 @@ export const addEmployeeDetailToProjectRepo = async (projectId: string, employee
 
         // Check if the employee already exists in the project's employees array
         const employeeExists = project.employees.some((employee: any) => 
-            employee.employeeID._id.toString() === employeeDetail.employeeID._id.toString()
+            employee.employeeID._id.toString() === employeeDetail.employeeID._id
         );
 
         logger.info(`employeeExists: ${employeeExists}`);
@@ -245,6 +245,7 @@ export const addEmployeeDetailToProjectRepo = async (projectId: string, employee
         }
 
         // If the employee does not exist, add them to the project
+        logger.info(`Adding employee detail ${JSON.stringify(employeeDetail)} to project with id: ${projectId}`);
         const updatedProject = await projectSchema.findByIdAndUpdate(
             projectId,
             { $push: { employees: employeeDetail } },
@@ -415,10 +416,22 @@ export const removeExpenseDetailFromProjectRepo = async (projectId: string, expe
 export const removeEmployeeDetailFromProjectRepo = async (projectId: string, employeeId: string) => {
     try {
         logger.info(`Removing employee detail with id: ${employeeId} from project with id: ${projectId}`);
+
+        // Find and update the project by removing the employee
         const project = await projectSchema.findByIdAndUpdate(
             projectId,
             { $pull: { employees: { _id: employeeId } } },
             { new: true }
+        );
+
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        // Remove the project from the user's assignedProjects
+        await userSchema.findByIdAndUpdate(
+            employeeId,
+            { $pull: { assignedProjects: projectId } }
         );
 
         await recalculateProjectTotals(projectId);
@@ -430,7 +443,6 @@ export const removeEmployeeDetailFromProjectRepo = async (projectId: string, emp
         throw new Error(error.message);
     }
 };
-
 const generateUniqueInvoiceNumber = async (): Promise<string> => {
     let invoiceNumber: string = '';
     let isUnique = false;
