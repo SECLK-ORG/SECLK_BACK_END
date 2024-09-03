@@ -3,6 +3,7 @@ import ejs from 'ejs';
 import path from 'path';
 import logger from '../utils/logger';
 import { mailConfig } from '../configs/mailConfig';
+import { FRONTEND_URL } from '../configs/config';
 
 const MailConfig = {
     service: mailConfig.host,
@@ -18,7 +19,7 @@ export const sendEmail = async (receiver: string, subject: string, resetToken: s
     try {
         //welcome.ejs
         const templatePath = path.resolve(__dirname, '..', 'templates', template);
-        const data = await ejs.renderFile(templatePath, { name,url:`http://localhost:3000/login/${resetToken}` });
+        const data = await ejs.renderFile(templatePath, { name,url:`${FRONTEND_URL}login/${resetToken}` });
 
         const mailOptions = {
             from:MailConfig.auth.user,
