@@ -7,9 +7,13 @@ import { FRONTEND_URL } from '../configs/config';
 
 const MailConfig = {
     service: mailConfig.host,
+    secure: false,  
     auth: {
         user: mailConfig.auth.user,
         pass: mailConfig.auth.pass
+    },
+    tls: {
+        rejectUnauthorized: false 
     }
 };
 
