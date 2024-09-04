@@ -427,10 +427,15 @@ export const removeEmployeeDetailFromProjectRepo = async (projectId: string, emp
         }
 
         // Remove the project from the user's assignedProjects
-        await userSchema.findByIdAndUpdate(
+        const updatedUser = await userSchema.findByIdAndUpdate(
             employeeId,
-            { $pull: { assignedProjects: new mongoose.Types.ObjectId(projectId) } }  
+            { $pull: { assignedProjects: new mongoose.Types.ObjectId(projectId) } },  // Ensure projectId is treated as ObjectId
+            { new: true }  // Return the updated user
         );
+
+        if (!updatedUser) {
+            throw new Error(`User with id ${employeeId} not found`);
+        }
 
         await recalculateProjectTotals(projectId);
 
