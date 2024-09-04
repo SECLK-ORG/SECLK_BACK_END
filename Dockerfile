@@ -16,7 +16,10 @@ COPY . .
 # Build the TypeScript code
 RUN npm run build
 
-# Copy EJS templates from 'src/templates' to 'dist/templates'
+# Copy the public directory (which includes images) into the dist directory
+COPY ./src/public ./dist/public
+
+# Copy EJS templates to the dist directory
 COPY ./src/templates ./dist/templates
 
 # Expose the port the app runs on
