@@ -292,7 +292,6 @@ export const updateExpenseDetailInProjectRepo = async (projectId: string, expens
     try {
         logger.info(`Updating expense detail with id: ${expenseId} in project with id: ${projectId}`);
 
-        // Find the project and the specific expense detail
         const project = await projectSchema.findOne({ _id: projectId });
         if (!project) {
             throw new Error('Project not found');
@@ -305,7 +304,6 @@ export const updateExpenseDetailInProjectRepo = async (projectId: string, expens
 
         const oldEmployeeId = oldExpenseDetail.employeeID ? oldExpenseDetail.employeeID._id.toString() : null;
 
-        // Construct the $set object to only update the fields provided
         const setFields: any = {};
         for (const [key, value] of Object.entries(updatedExpenseDetail)) {
             setFields[`expenseDetails.$.${key}`] = value;
