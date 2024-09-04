@@ -37,8 +37,9 @@ export const sendEmail = async (receiver: string, subject: string, resetToken: s
 
         const info = await transporter.sendMail(mailOptions);
         logger.info('Message sent: %s', info.messageId);
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`Error sending email: ${error}`);
+        logger.error(`Error sending email: ${error.message}`, error.stack);
     }
 };
 
@@ -70,7 +71,8 @@ export const sendProjectAssignmentEmail = async (receiver: string, projectDetail
 
         const info = await transporter.sendMail(mailOptions);
         logger.info('Assignment email sent: %s', info.messageId);
-    } catch (error) {
+    } catch (error:any) {
         logger.error(`Error sending assignment email:${error}`, );
+        logger.error(`Error sending email: ${error.message}`, error.stack);
     }
 };
