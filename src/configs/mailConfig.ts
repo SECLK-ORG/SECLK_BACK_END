@@ -1,5 +1,5 @@
 export const mailConfig = {
-    host: 'smtp.gmail.com',
+    host: 'gmail',
     port: 587,
     debug: false,
     auth: {
