@@ -16,6 +16,9 @@ COPY . .
 # Build the TypeScript code
 RUN npm run build
 
+# Copy EJS templates from 'src/templates' to 'dist/templates'
+COPY ./src/templates ./dist/templates
+
 # Expose the port the app runs on
 EXPOSE 3000
 
