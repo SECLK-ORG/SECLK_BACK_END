@@ -20,7 +20,7 @@ export const sendEmail = async (receiver: string, subject: string, resetToken: s
         //welcome.ejs
         const templatePath = path.resolve(__dirname, '..', 'templates', template);
         const data = await ejs.renderFile(templatePath, { name,url:`${FRONTEND_URL}login/${resetToken}` });
-
+        logger.info(`Service: sendEmail - Email sent to ${receiver}, subject: ${subject},FRONTEND_URL:${FRONTEND_URL}`);
         const mailOptions = {
             from:MailConfig.auth.user,
             to: receiver,
@@ -38,7 +38,7 @@ export const sendEmail = async (receiver: string, subject: string, resetToken: s
         const info = await transporter.sendMail(mailOptions);
         logger.info('Message sent: %s', info.messageId);
     } catch (error) {
-        logger.error('Error sending email:', error);
+        logger.error(`Error sending email: ${error}`);
     }
 };
 
@@ -71,6 +71,6 @@ export const sendProjectAssignmentEmail = async (receiver: string, projectDetail
         const info = await transporter.sendMail(mailOptions);
         logger.info('Assignment email sent: %s', info.messageId);
     } catch (error) {
-        logger.error('Error sending assignment email:', error);
+        logger.error(`Error sending assignment email:${error}`, );
     }
 };
